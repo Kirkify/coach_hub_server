@@ -1,0 +1,170 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\ContactRequest;
+use App\Jobs\ContactRequestJob;
+use App\Models\User;
+use Carbon\Carbon;
+use Cmgmyr\Messenger\Models\Message;
+use Cmgmyr\Messenger\Models\Participant;
+use Cmgmyr\Messenger\Models\Thread;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+
+class MessagingController extends Controller
+{
+    private $user;
+
+    public function __construct()
+    {
+        $this->middleware(['auth:api']);
+        $this->user = Auth::user();
+    }
+
+    public function contacts()
+    {
+        $users = User::all(['id', 'first_name', 'last_name'])->except($this->user->id);
+        return $users;
+    }
+
+    public function thread(Thread $thread)
+    {
+        if ($thread->hasParticipant($this->user->id))
+        {
+            $thread->markAsRead($this->user->id);
+
+            $participants = DB::table('participants')
+                ->join('users', 'participants.user_id', '=', 'users.id')
+                ->where('participants.thread_id', '=', $thread->id)
+                ->where('users.id', '!=', $this->user->id)
+                ->select('users.id', 'users.first_name', 'users.last_name')
+                ->orderBy('users.first_name', 'asc')
+                ->get();
+
+            $messages = DB::table('messages')
+                ->where('messages.thread_id', $thread->id)
+                ->join('users', 'messages.user_id', '=', 'users.id')
+                ->select('messages.body', 'messages.created_at', 'users.id', 'users.first_name', 'users.last_name')
+                ->orderBy('messages.created_at', 'desc')
+                ->get();
+
+            // Carbonize dates
+            foreach ($messages as $message) {
+                $message->created_at = Carbon::parse($message->created_at)->diffForHumans();
+            }
+
+            return response()
+                ->json([
+                    'thread' => $thread,
+                    'messages' => $messages,
+                    'participants' => $participants
+                ]);
+        }
+    }
+
+    public function threadReply(Thread $thread, Request $request)
+    {
+        $request->validate([
+            'body' => 'required|string'
+        ]);
+
+        if ($thread->hasParticipant($this->user->id))
+        {
+            Message::create([
+                'thread_id' => $thread->id,
+                'user_id' => $this->user->id,
+                'body' => $request['body']
+            ]);
+
+            $thread->markAsRead($this->user->id);
+        }
+
+        return response()->json();
+    }
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Laravel\Passport\Http\Controllers\AccessTokenController  $accessTokenController
+     * @return \Illuminate\Http\Response
+     */
+    public function threads(Request $request)
+    {
+//        $threads = DB::table('threads')
+//            ->join('participants', 'threads.id', '=', 'participants.thread_id')
+//            ->where('participants.user_id', $this->user->id)
+//            ->where('participants.deleted_at', null);
+//
+//        $participantTable = Models::table('participants');
+//        $threadsTable = Models::table('threads');
+//
+//        return $query->join($participantTable, $this->getQualifiedKeyName(), '=', $participantTable . '.thread_id')
+//            ->where($participantTable . '.user_id', $userId)
+//            ->whereNull($participantTable . '.deleted_at')
+//            ->where(function (Builder $query) use ($participantTable, $threadsTable) {
+//                $query->where($threadsTable . '.updated_at', '>', $this->getConnection()->raw($this->getConnection()->getTablePrefix() . $participantTable . '.last_read'))
+//                    ->orWhereNull($participantTable . '.last_read');
+//            })
+//            ->select($threadsTable . '.*');
+//
+//            //->leftJoin('messages', 'threads.id', '=', 'messages.thread_id')
+//            // ->select('threads.id', 'threads.subject', 'participants.last_read')
+//            //->orderBy('participants.last_read', 'desc')
+//            // ->get();
+
+        $unreadThreads = Thread::forUserWithNewMessages($this->user->id)->latest('updated_at')->get();
+        $unreadThreadIds = $unreadThreads->pluck('id')->toArray();
+
+        $readThreads = Thread::forUser($this->user->id)->whereNotIn('threads.id', $unreadThreadIds)->latest('updated_at')->get();
+
+        $mergedThreads = $unreadThreads->merge($readThreads);
+
+//        foreach ($mergedThreads as $thread) {
+//            $thread->updated_at = Carbon::parse($thread->updated_at)->diffForHumans();
+//        }
+
+        return $mergedThreads;
+    }
+
+    public function compose(Request $request)
+    {
+        // TODO: move exist validation to a method where we make sure that
+        // TODO: the participants added is part of users' friends list
+        $request->validate([
+            'participants' => 'required',
+            'participants.*.id' => 'required|integer|distinct|exists:users,id',
+            'subject' => 'nullable|string',
+            'body' => 'required|string'
+        ]);
+
+        $thread = Thread::create([
+           'subject' => $request['subject'] ?? ''
+        ]);
+
+        Message::create([
+           'thread_id' => $thread->id,
+           'user_id' => $this->user->id,
+           'body' => $request['body']
+        ]);
+
+        // Add current user as a new participant
+        // Set last read to now as they created
+        Participant::create([
+            'thread_id' => $thread->id,
+            'user_id' => $this->user->id,
+            'last_read' => new Carbon
+        ]);
+
+        foreach ($request['participants'] as $participant) {
+            // Extract only the ids
+            $userIds = array_column($request['participants'], 'id');
+            $thread->addParticipant($userIds);
+        }
+
+        return response()->json();
+    }
+}
