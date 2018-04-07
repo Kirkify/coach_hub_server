@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Rules\Captcha;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -36,6 +37,21 @@ class ForgotPasswordController extends Controller
     protected function validateResetToken() {
 
     }
+
+    /**
+     * Validate the email for the given request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function validateEmail(Request $request)
+    {
+        $this->validate($request, [
+            'email' => 'required|email',
+            'captcha' => ['required', new Captcha]
+        ]);
+    }
+
     /**
      * Get the response for a successful password reset link.
      *

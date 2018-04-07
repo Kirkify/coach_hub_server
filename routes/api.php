@@ -33,13 +33,18 @@ Route::post('/user/profile', 'UserController@updateProfile');
 Route::post('/user', 'UserController@updateUser');
 
 // Authentication Routes
-Route::post('/login', 'Auth\AuthenticationController@login')->name('login');
-Route::post('/login/refresh', 'Auth\AuthenticationController@refresh')->name('refresh');
 Route::post('/logout', 'Auth\AuthenticationController@logout')->name('logout');
 Route::post('/register', 'Auth\RegisterController@register')->name('register');
 Route::post('/verify', 'Auth\RegisterController@verify')->name('verify');
 Route::post('/forgot-password', 'Auth\ForgotPasswordController@sendResetLinkEmail');
 Route::post('/forgot-password/reset', 'Auth\ResetPasswordController@reset');
+// Login Routes (OAuth Clients Included)
+Route::group(['prefix' => '/login'], function () {
+    Route::post('', 'Auth\AuthenticationController@login')->name('login');
+    Route::post('/refresh', 'Auth\AuthenticationController@refresh')->name('refresh');
+    // Social Media Authentication
+    Route::post('/social', 'Auth\SocialAuthController@authenticate');
+});
 
 // EXAMPLE OF HOW TO USE SCOPES
 

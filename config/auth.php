@@ -99,4 +99,25 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Token Expiries
+    |--------------------------------------------------------------------------
+    |
+    | Here we define the expiry for our PASSPORT tokens
+    | values are stored in MINUTES
+    |
+    | The expire time is the number of minutes that an access token and a
+    | refresh token should be considered valid. This security feature keeps access tokens
+    | short-lived so they have less time to be guessed. You may change this as needed.
+    |
+    */
+
+    'tokens' => [
+        'expiry' => [
+            'access_token' => 60,
+            'refresh_token' => 43200,
+        ],
+    ],
+
 ];

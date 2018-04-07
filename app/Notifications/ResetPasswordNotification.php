@@ -51,8 +51,6 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
                     ->line('Click the button below to reset your password.')
                     ->action('Reset Password',
                         url('/identify/forgot-password/reset?email=' . $this->email . '&token=' . $this->token))
-                    ->line('Or you may enter the following Token Code:')
-                    ->line($this->token)
                     ->line('If you did not request a password reset, no further action is required.');
     }
 

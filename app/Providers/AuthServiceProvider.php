@@ -2,13 +2,18 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Gate;
+use App\Providers\Traits\TokenExpiryTrait;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
-use Carbon\Carbon;
+use App\Http\Grant\SocialGrant;
+use Laravel\Passport\Bridge\RefreshTokenRepository;
+use Laravel\Passport\Bridge\UserRepository;
+use League\OAuth2\Server\AuthorizationServer;
 
 class AuthServiceProvider extends ServiceProvider
 {
+    use TokenExpiryTrait;
+
     /**
      * The policy mappings for the application.
      *
@@ -38,8 +43,31 @@ class AuthServiceProvider extends ServiceProvider
             $router->forTransientTokens();
         });
 
-        Passport::tokensExpireIn(Carbon::now()->addDays(1));
+        Passport::tokensExpireIn(now()->addMinutes(config('auth.tokens.expiry.access_token')));
+        Passport::refreshTokensExpireIn(now()->addMinutes(config('auth.tokens.expiry.refresh_token')));
+    }
 
-        Passport::refreshTokensExpireIn(Carbon::now()->addDays(2));
+    /**
+     * Register services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        app()->afterResolving(AuthorizationServer::class, function (AuthorizationServer $server) {
+            $grant = $this->makeGrant();
+            $server->enableGrantType($grant, Passport::tokensExpireIn());
+        });
+    }
+
+    private function makeGrant() {
+        $grant = new SocialGrant(
+            $this->app->make(UserRepository::class),
+            $this->app->make(RefreshTokenRepository::class)
+        );
+
+        $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
+
+        return $grant;
     }
 }

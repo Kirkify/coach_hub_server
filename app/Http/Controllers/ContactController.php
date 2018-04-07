@@ -28,7 +28,14 @@ class ContactController extends Controller
      */
     public function contact(Request $request)
     {
-        $this->validator($request->all())->validate();
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone_number' => 'nullable|regex:[\(\b[0-9]{3}\)[" ". ][0-9]{3}[-. ][0-9]{4}\b]',
+            'message' => 'string',
+            'prefer_call' => 'boolean'
+        ]);
 
         // If user is currently logged in let's relate their user_id to the contact request
         $userId = Auth::guard('api')->check() ? Auth::guard('api')->id() : null;

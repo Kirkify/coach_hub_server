@@ -16,13 +16,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // TODO: Remove in production
-        DB::listen(function ($query) {
-            Log::info($query->sql);
-            // $query->sql
-            // $query->bindings
-            // $query->time
-        });
+        if ($this->app->environment() !== 'production') {
+            DB::listen(function ($query) {
+                Log::info($query->sql);
+                // $query->sql
+                // $query->bindings
+                // $query->time
+            });
+        }
     }
 
     /**
@@ -36,5 +37,9 @@ class AppServiceProvider extends ServiceProvider
         Horizon::routeMailNotificationsTo('davies.kirk@icloud.com');
         // Horizon::routeSlackNotificationsTo('slack-webhook-url', '#channel');
         // Horizon::routeSmsNotificationsTo('15556667777');
+
+        if ($this->app->environment() !== 'production') {
+            $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+        }
     }
 }

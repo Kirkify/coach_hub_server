@@ -1,25 +1,24 @@
 <?php
 
-namespace App\Mail\Contact_Us;
+namespace App\Mail;
 
-use App\Models\ContactRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UserMail extends Mailable implements ShouldQueue
+class WelcomeMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    protected $user;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(ContactRequest $user)
+    public function __construct($user)
     {
         $this->user = $user;
     }
@@ -32,7 +31,9 @@ class UserMail extends Mailable implements ShouldQueue
     public function build()
     {
         $this->setAddress($this->user->email, $this->user->first_name . ' ' . $this->user->last_name);
-        $this->subject('Contact Request Received');
-        return $this->markdown('emails.contact_us.user');
+        $this->subject('Welcome');
+        return $this->markdown('emails.welcome')->with([
+            'user' => $this->user
+        ]);
     }
 }

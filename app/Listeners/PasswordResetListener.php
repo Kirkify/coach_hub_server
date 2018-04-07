@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Jobs\UserRegisteredJob;
+use App\Mail\PasswordResetCompleteMail;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Queue\InteractsWithQueue;
@@ -10,7 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Mail\ConfirmEmailMail;
 use Illuminate\Support\Facades\Mail;
 
-class UserRegisteredListener
+class PasswordResetListener
 {
     /**
      * Create the event listener.
@@ -30,6 +31,7 @@ class UserRegisteredListener
      */
     public function handle(Registered $event)
     {
-        UserRegisteredJob::dispatch($event->user);
+        $email = new PasswordResetCompleteMail($event->user);
+        Mail::send($email);
     }
 }

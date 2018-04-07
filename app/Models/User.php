@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'password', 'email_token'
+        'first_name', 'last_name', 'email', 'password', 'verified'
     ];
 
     /**
@@ -28,7 +28,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'email_token', 'verified'
+        'password'
     ];
 
     /**
@@ -42,11 +42,19 @@ class User extends Authenticatable
         $this->notify(new ResetPasswordNotification($token, $this->getEmailForPasswordReset()));
     }
 
+    public function socialAccounts() {
+        return $this->hasMany(SocialAccount::class);
+    }
+
     public function contactRequests() {
         return $this->hasMany(ContactRequest::class);
     }
 
     public function profile() {
         return $this->hasOne(UserProfile::class);
+    }
+
+    public function confirmEmail() {
+        return $this->hasOne(ConfirmEmail::class);
     }
 }
