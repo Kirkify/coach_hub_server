@@ -38,12 +38,24 @@ return [
     'github' => [
         'client_id' => env('GITHUB_CLIENT_ID'),         // Your GitHub Client ID
         'client_secret' => env('GITHUB_CLIENT_SECRET'), // Your GitHub Client Secret
-        'redirect' => 'https://localhost:4200/login?provider=github',
+        'redirect' => config('app.url') . '/login?provider=github',
     ],
 
     'facebook' => [
         'client_id' => env('FACEBOOK_CLIENT_ID'),         // Your GitHub Client ID
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'), // Your GitHub Client Secret
-        'redirect' => 'https://localhost:4200/login?provider=facebook',
+        'redirect' => config('app.url') . '/login?provider=facebook',
     ],
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),         // Your GitHub Client ID
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'), // Your GitHub Client Secret
+        'redirect' => config('app.url') . '/login?provider=google',
+    ],
+
+    'linkedin' => [
+        'client_id' => env('LINKEDIN_CLIENT_ID'),         // Your GitHub Client ID
+        'client_secret' => env('LINKEDIN_CLIENT_SECRET'), // Your GitHub Client Secret
+        'redirect' => config('app.url') . '/login?provider=linkedin',
+    ]
 ];

@@ -20,7 +20,7 @@ class SocialAuthController extends Controller
     {
         $request->validate([
             'code' => 'required|string',
-            'provider' => 'required|in:facebook,github'
+            'provider' => 'required|in:facebook,github,google,linkedin'
         ]);
 
         $provider = $request->input('provider');
@@ -37,6 +37,8 @@ class SocialAuthController extends Controller
             // Some providers like facebook, don't force users to sign up with an email, they can also
             // use a phone number, at this point in time we do not allow this
             if ($email) {
+                // Some providers like LinkedIn don't make emails lowercase
+                $email = strtolower($email);
                 // This param is needed for the social grant
                 $request->request->add(['email' => $email]);
                 // Check if user already has an email associated to their account

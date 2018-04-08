@@ -65,7 +65,7 @@ trait IssueTokenTrait
 
             if ($user->verified) {
                 $jwt->user = $user;
-
+                $jwt->server_time = now()->timestamp;
                 // If issued through the Web
                 if ($clientId === env('WEB_CLIENT_ID')) {
 

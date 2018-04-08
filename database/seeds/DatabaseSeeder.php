@@ -8,7 +8,7 @@ class DatabaseSeeder extends Seeder
         DB::table('oauth_clients')->insert([
             'name' => 'Web Client',
             'secret' => '3BFHUAhTiXwJcfbI0Wf5CowUo99gq0IXWoMhllz3',
-            'redirect' => 'http://localhost',
+            'redirect' => config('app.url'),
             'personal_access_client' => 0,
             'password_client' => 1,
             'revoked' => 0,
