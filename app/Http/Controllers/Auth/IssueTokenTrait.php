@@ -51,7 +51,7 @@ trait IssueTokenTrait
             $request->request->add(['email_only_secret' => env('EMAIL_ONLY_SECRET')]);
         }
 
-        $proxy = Request::create('oauth/token', 'POST');
+        $proxy = Request::create('oauth/token?XDEBUG_SESSION_START=19042', 'POST');
 
         $response = Route::dispatch($proxy);
 

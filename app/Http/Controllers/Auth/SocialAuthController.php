@@ -41,6 +41,9 @@ class SocialAuthController extends Controller
                 $email = strtolower($email);
                 // This param is needed for the social grant
                 $request->request->add(['email' => $email]);
+                // We are also forcing * scope
+                // TODO: Maybe * isn't right
+                $request->request->add(['scope' => '*']);
                 // Check if user already has an email associated to their account
                 $user = User::where('email', $email)->first();
                 // If they do

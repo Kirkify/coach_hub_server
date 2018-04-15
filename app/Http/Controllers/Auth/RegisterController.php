@@ -73,12 +73,13 @@ class RegisterController extends Controller
                     $user->save();
                     event(new Registered($user));
                     return $this->issueToken($request, 'social');
+                } else {
+                    return response()->json(trans('password.confirmation_code'), 422);
                 }
             } else {
-                // TODO: Update response to email already verified
-                return response()->json(trans('passwords.email_verify_fail'), 422);
+                return response()->json(trans('auth.email_already_verified'), 422);
             }
         }
-        return response()->json(trans('passwords.email_verify_fail'), 422);
+        return response()->json(trans('passwords.user'), 422);
     }
 }
