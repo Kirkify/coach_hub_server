@@ -1,7 +1,7 @@
 @component('mail::message')
 # Welcome {{ $user->first_name }}
 
-Thank you for signing up to Coach Hub!  Please verify your email address by clicking the button below
+Thank you for signing up to {{ config('app.name') }}!  Please verify your email address by clicking the button below
 
 @component('mail::button', [
     'url' => config('app.url') . '/identify/verify?email=' . urlencode($user->email) . '&token=' . urlencode($user->confirmEmail->token)

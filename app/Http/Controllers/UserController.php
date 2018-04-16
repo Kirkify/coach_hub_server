@@ -36,12 +36,12 @@ class UserController extends Controller
 
         $user = $request->user();
 
-        $user->first_name = $request['first_name'];
-        $user->last_name = $request['last_name'];
+        $user->first_name = $request->input('first_name');
+        $user->last_name = $request->input('last_name');
 
         if ($user->save())
         {
-            return response()->json();
+            return response()->json($user);
         }
 
         return response()->json('There was an error updating your account', 401);

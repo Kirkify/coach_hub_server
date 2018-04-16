@@ -74,7 +74,7 @@ class RegisterController extends Controller
                     event(new Registered($user));
                     return $this->issueToken($request, 'social');
                 } else {
-                    return response()->json(trans('password.confirmation_code'), 422);
+                    return response()->json(trans('passwords.confirmation_code'), 422);
                 }
             } else {
                 return response()->json(trans('auth.email_already_verified'), 422);

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Mockery\Exception;
 use TheIconic\NameParser\Parser;
 use Lcobucci\JWT\Parser as JwtParser;
 
@@ -72,7 +73,6 @@ class SocialAuthController extends Controller
             }
         }
 
-        // TODO: Update trans
-        return response()->json(trans('passwords.email_verify_fail'), 422);
+        return response()->json(trans('auth.social_code', ['provider' => $request->input('provider')]), 422);
     }
 }
