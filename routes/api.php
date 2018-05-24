@@ -28,9 +28,16 @@ Route::group(['prefix' => '/messaging'], function () {
     Route::post('/compose', 'MessagingController@compose');
 });
 
-Route::get('/user/profile', 'UserController@getProfile');
-Route::post('/user/profile', 'UserController@updateProfile');
-Route::post('/user', 'UserController@updateUser');
+// User Modification Routes
+Route::group(['prefix' => '/user'], function () {
+    Route::post('/', 'UserController@updateUser');
+    Route::get('/profile', 'UserController@getProfile');
+    Route::post('/profile', 'UserController@updateProfile');
+    Route::post('/email', 'UserController@updateEmail');
+    Route::post('/password', 'UserController@updatePassword');
+});
+
+
 
 // Authentication Routes
 Route::post('/logout', 'Auth\AuthenticationController@logout')->name('logout');

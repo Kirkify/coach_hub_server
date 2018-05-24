@@ -48,7 +48,9 @@ class EmailOnlyGrant extends AbstractGrant
         $user = $this->validateUser($request, $client);
 
         // Finalize the requested scopes
-        $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, $this->getIdentifier(), $client, $user->getIdentifier());
+        // TODO: Probably not correct but we emulate a password grantType as we still want to make sure scopes are valid
+        // See vendor/laravel/passport/src/Bridge/ScopeRepository.php for more details
+        $finalizedScopes = $this->scopeRepository->finalizeScopes($scopes, 'password', $client, $user->getIdentifier());
 
         // Issue and persist new tokens
         $accessToken = $this->issueAccessToken($accessTokenTTL, $client, $user->getIdentifier(), $finalizedScopes);

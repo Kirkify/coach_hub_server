@@ -15,6 +15,10 @@ class ConfirmEmail extends Model
         'token', 'verified', 'new_email'
     ];
 
+    public function generateToken() {
+
+    }
+
     public function user() {
         return $this->belongsTo(User::class);
     }

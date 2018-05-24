@@ -46,12 +46,12 @@ trait IssueTokenTrait
         }
 
         // If refresh_token grant and issued through our web app
-        if ($grantType == 'social' && $clientId === env('WEB_CLIENT_ID')) {
+        if ($grantType == 'email_only' && $clientId === env('WEB_CLIENT_ID')) {
             // Grab the token from the cookie
             $request->request->add(['email_only_secret' => env('EMAIL_ONLY_SECRET')]);
         }
 
-        $proxy = Request::create('oauth/token?XDEBUG_SESSION_START=19042', 'POST');
+        $proxy = Request::create('oauth/token?XDEBUG_SESSION_START=18195', 'POST');
 
         $response = Route::dispatch($proxy);
 
@@ -65,7 +65,6 @@ trait IssueTokenTrait
 
             if ($user->verified) {
                 $jwt->user = $user;
-                $jwt->server_time = now()->timestamp;
                 // If issued through the Web
                 if ($clientId === env('WEB_CLIENT_ID')) {
 

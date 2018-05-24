@@ -50,7 +50,7 @@ class SocialAuthController extends Controller
                 // If they do
                 if ($user) {
                     // Issue them a token
-                    return $this->issueToken($request, 'social');
+                    return $this->issueToken($request, 'email_only');
                 // This is their first time using this email
                 } else {
                     try {
@@ -65,7 +65,7 @@ class SocialAuthController extends Controller
                             'verified' => 1
                         ]);
                         // Now issue them a token
-                        return $this->issueToken($request, 'social');
+                        return $this->issueToken($request, 'email_only');
                     } catch (\Exception $exception) {
                         // TODO: Log exception
                     }

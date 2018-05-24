@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -18,13 +19,56 @@ class UserController extends Controller
 
     public function getProfile(Request $request)
     {
-        $profile = $request->user()->profile;
-        if ($profile)
+        return $request->user()->profile;
+    }
+
+    public function updateEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string|max:255|unique:users',
+            'password' => 'required|string|max:255'
+        ]);
+
+        $user = $request->user();
+
+        if (Hash::check($request->input('password'), $user->password))
         {
-            return $profile;
+
+        } else {
+            return response()->json('Your password was incorrect', 422);
         }
-        // TODO: do something else here if no profile
-        return $profile;
+//        $user->first_name = $request->input('first_name');
+//        $user->last_name = $request->input('last_name');
+//
+//        if ($user->save())
+//        {
+//            return response()->json($user);
+//        }
+
+        return response()->json('There was an error updating your name', 422);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:6|confirmed'
+        ]);
+
+        $user = $request->user();
+
+        if (Hash::check($request->input('current_password'), $user->password))
+        {
+            $user->password = Hash::make($request->input('password'));
+            if ($user->save())
+            {
+                return response()->json();
+            }
+        } else {
+            return response()->json('Your password was incorrect', 422);
+        }
+
+        return response()->json('There was an error updating your password', 422);
     }
 
     public function updateUser(Request $request)
@@ -44,7 +88,7 @@ class UserController extends Controller
             return response()->json($user);
         }
 
-        return response()->json('There was an error updating your account', 401);
+        return response()->json('There was an error updating your name', 422);
     }
 
     public function updateProfile(Request $request)
@@ -65,12 +109,16 @@ class UserController extends Controller
         $userProfile = $user->profile;
 
         if ($userProfile) {
-            $userProfile->update($request->all());
+            if ($userProfile->update($request->all())) {
+                return response()->json($userProfile);
+            }
         } else {
             $profile = new UserProfile($request->all());
-            $user->profile()->save($profile);
+            if ($user->profile()->save($profile)) {
+                return response()->json($profile);
+            }
         }
 
-        return response()->json();
+        return response()->json('There was an error updating your profile', 422);
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
+use App\Http\Grant\EmailOnlyGrant;
 use App\Providers\Traits\TokenExpiryTrait;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
-use App\Http\Grant\SocialGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Bridge\UserRepository;
 use League\OAuth2\Server\AuthorizationServer;
@@ -61,7 +61,7 @@ class AuthServiceProvider extends ServiceProvider
     }
 
     private function makeGrant() {
-        $grant = new SocialGrant(
+        $grant = new EmailOnlyGrant(
             $this->app->make(UserRepository::class),
             $this->app->make(RefreshTokenRepository::class)
         );
