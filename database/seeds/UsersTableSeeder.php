@@ -39,7 +39,7 @@ class UsersTableSeeder extends Seeder
         $kirk->profile()->save($profileForKirk);
 
         // Give admin role
-        $kirk->assignRole(Role::findByName('admin'));
+        $kirk->assignRole(Role::findByName(config('role.names.super_admin')));
 
 
         factory(User::class, 50)->create()->each(function ($u) {

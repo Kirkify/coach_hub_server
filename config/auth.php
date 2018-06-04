@@ -115,7 +115,7 @@ return [
 
     'tokens' => [
         'expiry' => [
-            'access_token' => 1,
+            'access_token' => 60,
             'refresh_token' => 43200,
         ],
     ],

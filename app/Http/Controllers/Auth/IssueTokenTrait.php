@@ -61,10 +61,15 @@ trait IssueTokenTrait
             // We can grab the user id from the access token
             $accessToken = (new Parser())->parse($jwt->access_token);
             $userId = $accessToken->getClaim('sub');
+
+            // TODO: Make one query which returns the user roles as well
+            // This could be further improved if eventually adding user and role info to token
             $user = User::find($userId);
 
             if ($user->verified) {
                 $jwt->user = $user;
+                $jwt->roles = $user->getRoleNames();
+
                 // If issued through the Web
                 if ($clientId === env('WEB_CLIENT_ID')) {
 

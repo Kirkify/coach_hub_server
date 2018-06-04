@@ -115,3 +115,17 @@ Route::get('/private-event', function() {
     // Redis::set('name', 'Kirk');
     // return Redis::get('name');
 });
+
+// Login Routes (OAuth Clients Included)
+Route::group(['prefix' => '/administration'], function () {
+    Route::post('', 'Auth\AuthenticationController@login')->name('login');
+    Route::post('/refresh', 'Auth\AuthenticationController@refresh')->name('refresh');
+    // Social Media Authentication
+    Route::post('/social', 'Auth\SocialAuthController@authenticate');
+});
+
+Route::group(['prefix' => '/login', 'middleware' => ['role:' . config('role.names.super_admin')]], function () {
+    Route::get('user1', function() {
+        return App\Models\User::latest('id')->get();
+    });
+});

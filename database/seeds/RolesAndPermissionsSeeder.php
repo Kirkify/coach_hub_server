@@ -17,19 +17,27 @@ class RolesAndPermissionsSeeder extends Seeder
         // Reset cached roles and permissions
         app()['cache']->forget('spatie.permission.cache');
 
-        // create permissions
-        Permission::create(['name' => 'edit articles']);
-        Permission::create(['name' => 'delete articles']);
-        Permission::create(['name' => 'publish articles']);
-        Permission::create(['name' => 'unpublish articles']);
+        // Super admin only permissions
+        Permission::create(['name' => config('permission.names.create_admin')]);
+        Permission::create(['name' => config('permission.names.read_admin')]);
+        Permission::create(['name' => config('permission.names.update_admin')]);
+        Permission::create(['name' => config('permission.names.delete_admin')]);
+
+        // Admin permissions
+        Permission::create(['name' => config('permission.names.create_user')]);
+        Permission::create(['name' => config('permission.names.read_user')]);
+        Permission::create(['name' => config('permission.names.update_user')]);
+        Permission::create(['name' => config('permission.names.delete_user')]);
 
         // create roles and assign existing permissions
-        $role = Role::create(['name' => 'writer']);
-        $role->givePermissionTo('edit articles');
-        $role->givePermissionTo('delete articles');
+        $role = Role::create(['name' => config('role.names.admin')]);
+        $role->givePermissionTo(config('permission.names.create_user'));
+        $role->givePermissionTo(config('permission.names.read_user'));
+        $role->givePermissionTo(config('permission.names.update_user'));
+        $role->givePermissionTo(config('permission.names.delete_user'));
 
-        $role = Role::create(['name' => 'admin']);
-        $role->givePermissionTo('publish articles');
-        $role->givePermissionTo('unpublish articles');
+        // Give super admins all permissions
+        $role = Role::create(['name' => config('role.names.super_admin')]);
+        $role->givePermissionTo(Permission::all());
     }
 }

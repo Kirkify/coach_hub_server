@@ -85,4 +85,23 @@ return [
      */
 
     'display_permission_in_exception' => false,
+
+    /*
+     * Constants
+     *
+     */
+
+    'names' => [
+        // Super Admin Permissions
+        'create_admin' => 'create admin',
+        'read_admin' => 'read admin',
+        'update_admin' => 'update admin',
+        'delete_admin' => 'delete admin',
+
+        // Admin Permissions
+        'create_user' => 'create user',
+        'read_user' => 'read user',
+        'update_user' => 'update user',
+        'delete_user' => 'delete user',
+    ],
 ];
