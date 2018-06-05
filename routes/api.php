@@ -93,6 +93,11 @@ Route::get('users', function() {
     return App\Models\User::latest('id')->get();
 });
 
+Route::get('/redi', function() {
+    Redis::set('name', 'Kirk');
+    return Redis::get('name');
+});
+
 Route::get('/private-event', function() {
 
     // Create a new fake user
