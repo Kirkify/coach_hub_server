@@ -17,7 +17,7 @@ Route::get('/test', function () {
 });
 
 // All other routes must come before this wildcard or they will not be called
-Route::any('{all}', function () {
-    // return view('index');
-    return file_get_contents(public_path().'/index.html');
-})->where(['all' => '.*']);
+//Route::any('{all}', function () {
+//    // return view('index');
+//    return file_get_contents(public_path().'/index.html');
+//})->where(['all' => '.*']);
