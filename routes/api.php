@@ -45,9 +45,10 @@ Route::post('/register', 'Auth\RegisterController@register')->name('register');
 Route::post('/verify', 'Auth\RegisterController@verify')->name('verify');
 Route::post('/forgot-password', 'Auth\ForgotPasswordController@sendResetLinkEmail');
 Route::post('/forgot-password/reset', 'Auth\ResetPasswordController@reset');
+
 // Login Routes (OAuth Clients Included)
 Route::group(['prefix' => '/login'], function () {
-    Route::post('', 'Auth\AuthenticationController@login')->name('login');
+    Route::post('', 'Auth\AuthenticationController@login');
     Route::post('/refresh', 'Auth\AuthenticationController@refresh')->name('refresh');
     // Social Media Authentication
     Route::post('/social', 'Auth\SocialAuthController@authenticate');
@@ -123,10 +124,9 @@ Route::get('/private-event', function() {
 
 // Login Routes (OAuth Clients Included)
 Route::group(['prefix' => '/administration'], function () {
-    Route::post('', 'Auth\AuthenticationController@login')->name('login');
-    Route::post('/refresh', 'Auth\AuthenticationController@refresh')->name('refresh');
-    // Social Media Authentication
-    Route::post('/social', 'Auth\SocialAuthController@authenticate');
+    Route::post('users', 'Administration\AdminController@getUsers');
+    Route::get('users/{user}', 'Administration\AdminController@getUser');
+
 });
 
 Route::group(['prefix' => '/login', 'middleware' => ['role:' . config('role.names.super_admin')]], function () {

@@ -19,4 +19,5 @@ return [
     'token' => 'This password reset token is invalid.',
     'user' => "We can't find a user with that e-mail address.",
     'confirmation_code' => 'The confirmation code is invalid.',
+    'please_verify_email' => 'Before logging in you must verify your email address'
 ];

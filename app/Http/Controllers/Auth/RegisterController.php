@@ -72,7 +72,7 @@ class RegisterController extends Controller
                     $user->confirmEmail()->delete();
                     $user->save();
                     event(new Registered($user));
-                    return $this->issueToken($request, 'social');
+                    return $this->issueToken($request, 'email_only');
                 } else {
                     return response()->json(trans('passwords.confirmation_code'), 422);
                 }
