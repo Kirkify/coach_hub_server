@@ -19,6 +19,16 @@ class MessageSent implements ShouldBroadcast
     public $newUser;
 
     /**
+     * The event's broadcast name.
+     *
+     * @return string
+     */
+    public function broadcastAs()
+    {
+        return config('socket.events.default');
+    }
+
+    /**
      * Create a new event instance.
      *
      * @return void
@@ -36,6 +46,21 @@ class MessageSent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('message.' . $this->user->id);
+        return new PrivateChannel(config('socket.channels.private.default') . $this->user->id);
+    }
+
+    /**
+     * Get the data to broadcast.
+     *
+     * @return array
+     */
+    public function broadcastWith()
+    {
+        return [
+            'event' => static::class,
+            'data' => [
+                'user' => $this->newUser
+            ]
+        ];
     }
 }
