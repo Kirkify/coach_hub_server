@@ -54,6 +54,13 @@ Route::group(['prefix' => '/login'], function () {
     Route::post('/social', 'Auth\SocialAuthController@authenticate');
 });
 
+Route::group(['prefix' => '/webrtc'], function () {
+    Route::get('get-all-channels', 'WebRTC\WebRTCController@getAllChannels');
+    Route::post('connect-with-user', 'WebRTC\WebRTCController@connectWithUser');
+    Route::post('accept-connection-request', 'WebRTC\WebRTCController@acceptConnectionRequest');
+    Route::post('send-ice-candidate', 'WebRTC\WebRTCController@sendIceCandidate');
+});
+
 // EXAMPLE OF HOW TO USE SCOPES
 
 //Route::get('/orders', function () {

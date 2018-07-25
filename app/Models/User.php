@@ -57,4 +57,9 @@ class User extends Authenticatable
     public function confirmEmail() {
         return $this->hasOne(ConfirmEmail::class);
     }
+
+    public function hasFriend($userId) {
+        // TODO: Implement friend list table
+        return true;
+    }
 }

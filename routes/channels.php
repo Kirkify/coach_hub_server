@@ -18,3 +18,9 @@ Broadcast::channel(config('socket.channels.private.default') . '{id}', function 
 Broadcast::channel('message.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+Broadcast::channel(config('socket.channels.presence.default'), function ($user) {
+    if ($user) {
+        return [ 'id' => $user->id, 'first_name' => $user->first_name, 'last_name' => $user->last_name ];
+    }
+});

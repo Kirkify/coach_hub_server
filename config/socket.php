@@ -2,6 +2,11 @@
 
 return [
 
+    'apps' => [
+        'default' => env('ECHO_SERVER_DEFAULT_APP', '')
+    ],
+
+    'auth_key' => env('ECHO_SERVER_AUTH_KEY', ''),
     /*
     |--------------------------------------------------------------------------
     | Broadcast Channels
@@ -14,7 +19,10 @@ return [
 
     'channels' => [
         'private' => [
-            'default' => 'default.' // This will always be followed with the Users Id
+            'default' => 'default.' // . will always be followed with the Users Id
+        ],
+        'presence' => [
+            'default' => 'default'
         ],
         'public' => [
 
