@@ -1,5 +1,13 @@
 # Server
 
+-----------
+### Table of Contents
+
+[How to Begin Development](#how-to-begin-development)
+
+[Installing Dependencies](#intalling-dependencies)
+
+-----------
 ## How to Begin Development
 
 Create a .env file for Laravel Defaults
@@ -8,7 +16,7 @@ Create a .env file for Laravel Defaults
 
 Modify the `.env` file for your environment if needed.
 
-## Install Dependencies
+## Installing Dependencies
 
 Make sure you have [Composer](https://getcomposer.org/) globally installed.
 
