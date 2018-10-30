@@ -3,10 +3,12 @@
 -----------
 ### Table of Contents
 
-[How to Begin Development](#how-to-begin-development)
-
-[Installing Dependencies](#installing-dependencies)
-
+* [How to Begin Development](#how-to-begin-development)
+     - [Installing Dependencies](#installing-dependencies)
+     - [Daily Briefing Documentation](https://github.com/hillaryfraley/jobbriefings#daily-briefing-documentation)
+* [Docker](#docker)
+     - [Create The Docker Images](#create-the-docker-images)
+    
 -----------
 ## How to Begin Development
 
@@ -29,8 +31,11 @@ To Generate the OAuth keys run the following command from the project root.
 
 `php artisan passport:keys`
 
+## Docker
 
-## Create Docker Images
+Docker can be used 
+
+### Create The Docker Images
 
 Navigate to the docker folder
 
