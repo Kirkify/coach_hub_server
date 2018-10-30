@@ -5,7 +5,7 @@
 
 [How to Begin Development](#how-to-begin-development)
 
-[Installing Dependencies](#intalling-dependencies)
+[Installing Dependencies](#installing-dependencies)
 
 -----------
 ## How to Begin Development
