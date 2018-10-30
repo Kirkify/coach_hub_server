@@ -6,23 +6,24 @@
 * [How to Begin Development](#how-to-begin-development)
      - [Installing Dependencies](#installing-dependencies)
      - [Daily Briefing Documentation](https://github.com/hillaryfraley/jobbriefings#daily-briefing-documentation)
-* [Docker](#docker)
-     - [Create The Docker Images](#create-the-docker-images)
+* [Environments](#environments)
+     * [Docker](#docker)
+          - [Create The Docker Images](#create-the-docker-images)
+
     
 -----------
 ## How to Begin Development
 
-Create a .env file for Laravel Defaults
+Copy and rename the included env.example file to .env This file contains all the sensitive information (passwords and tokens) and may need to be tailored for your dev environment. The `.env` file should never be checked in as then it may be compromised. To copy and rename the .env.example file run
 
 `cp .env.example .env`
 
-Modify the `.env` file for your environment if needed.
 
 ## Installing Dependencies
 
 Make sure you have [Composer](https://getcomposer.org/) globally installed.
 
-Then run `composer install --ignore-platform-reqs` from project root.
+Then run `composer install --ignore-platform-reqs` from project root.  This will generate all the needed php dependencies into a `vendor` folder in the root of the project.
 
 ## Generate OAuth Private Keys
 
