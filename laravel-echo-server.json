@@ -9,18 +9,13 @@
 	],
 	"database": "redis",
 	"databaseConfig": {
-		"redis": {},
-		"sqlite": {
-			"databasePath": "/database/laravel-echo-server.sqlite"
-		}
+		"redis": {}
 	},
 	"devMode": true,
 	"host": "localhost",
 	"port": "6001",
 	"protocol": "http",
-	"socketio": {
-		"wsEngine": "uws"
-	},
+	"socketio": {},
 	"sslCertPath": "",
 	"sslKeyPath": "",
 	"sslCertChainPath": "",
