@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ThreadMessage;
 use App\Models\ContactRequest;
 use App\Jobs\ContactRequestJob;
 use App\Models\User;
 use Carbon\Carbon;
-use Cmgmyr\Messenger\Models\Message;
-use Cmgmyr\Messenger\Models\Participant;
-use Cmgmyr\Messenger\Models\Thread;
+use App\Models\Message;
+use App\Models\Participant;
+use App\Models\Thread;
+//use Cmgmyr\Messenger\Models\Message;
+//use Cmgmyr\Messenger\Models\Participant;
+//use Cmgmyr\Messenger\Models\Thread;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -141,29 +145,36 @@ class MessagingController extends Controller
             'body' => 'required|string'
         ]);
 
+        $subject = $request['subject'] ?? '';
+        $body = $request['body'];
+
         $thread = Thread::create([
-           'subject' => $request['subject'] ?? ''
+           'subject' => $subject
         ]);
 
-        Message::create([
+        $message = Message::create([
            'thread_id' => $thread->id,
            'user_id' => $this->user->id,
-           'body' => $request['body']
+           'body' => $body
         ]);
 
         // Add current user as a new participant
-        // Set last read to now as they created
+        // Set last read to now as they created it
         Participant::create([
             'thread_id' => $thread->id,
             'user_id' => $this->user->id,
             'last_read' => new Carbon
         ]);
 
+        $userIds = array_column($request['participants'], 'id');
+        $thread->addParticipant($userIds);
+
         foreach ($request['participants'] as $participant) {
-            // Extract only the ids
-            $userIds = array_column($request['participants'], 'id');
-            $thread->addParticipant($userIds);
+            event(new ThreadMessage($participant["id"], $message, $this->user));
         }
+
+        // event(new ThreadMessage())
+
 
         return response()->json();
     }

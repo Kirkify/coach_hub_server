@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Message;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
@@ -11,13 +12,13 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class WebRTCConnectionRequest implements ShouldBroadcast
+class ThreadMessage implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private $user;
-    private $userIdOfFriend;
-    private $message;
+    private $userId;
+    private $userWhoSentMessage;
+    public $message;
 
     /**
      * The event's broadcast name.
@@ -34,11 +35,11 @@ class WebRTCConnectionRequest implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(User $user, $userIdOfFriend, $message)
+    public function __construct($userId, Message $message, User $user)
     {
-        $this->user = $user;
-        $this->userIdOfFriend = $userIdOfFriend;
+        $this->userId = $userId;
         $this->message = $message;
+        $this->userWhoSentMessage = $user;
     }
 
     /**
@@ -48,7 +49,7 @@ class WebRTCConnectionRequest implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel(config('socket.channels.private.default') . $this->userIdOfFriend);
+        return new PrivateChannel(config('socket.channels.private.default') . $this->userId);
     }
 
     /**
@@ -61,8 +62,9 @@ class WebRTCConnectionRequest implements ShouldBroadcast
         return [
             'event' => static::class,
             'data' => [
-                'user' => $this->user,
-                'message' => $this->message
+                'message' => $this->message,
+                'first_name' => $this->userWhoSentMessage->first_name,
+                'last_name' => $this->userWhoSentMessage->last_name
             ]
         ];
     }

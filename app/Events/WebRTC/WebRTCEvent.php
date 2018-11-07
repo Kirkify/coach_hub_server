@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\WebRTC;
 
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
@@ -11,13 +11,14 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class WebRTCAcceptConnectionRequest implements ShouldBroadcast
+class WebRTCEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     private $user;
     private $userIdOfFriend;
     private $message;
+    private $type;
 
     /**
      * The event's broadcast name.
@@ -34,11 +35,12 @@ class WebRTCAcceptConnectionRequest implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(User $user, $userIdOfFriend, $message)
+    public function __construct(User $user, $userIdOfFriend, $message, $type)
     {
         $this->user = $user;
         $this->userIdOfFriend = $userIdOfFriend;
         $this->message = $message;
+        $this->type = $type;
     }
 
     /**
@@ -62,6 +64,7 @@ class WebRTCAcceptConnectionRequest implements ShouldBroadcast
             'event' => static::class,
             'data' => [
                 'user' => $this->user,
+                'type' => $this->type,
                 'message' => $this->message
             ]
         ];

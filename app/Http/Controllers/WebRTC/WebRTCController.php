@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\WebRTC;
 
+use App\Events\WebRTC\WebRTCEvent;
+use App\Events\WebRTC\Models\WebRTCEventTypes;
 use App\Events\WebRTCAcceptConnectionRequest;
 use App\Events\WebRTCConnectionRequest;
 use App\Events\WebRTCNewIceCandidate;
@@ -67,7 +69,7 @@ class WebRTCController extends Controller
 
         // TODO: Maybe add check to make sure user is online as well
         if ($user->hasFriend($userIdOfFriend)) {
-            event(new WebRTCConnectionRequest($user, $userIdOfFriend, $message));
+            event(new WebRTCEvent($user, $userIdOfFriend, $message, WebRTCEventTypes::ConnectionRequest));
             return response()->json('Connection Request Sent');
         } else {
             return response()->json(trans('passwords.please_verify_email'), 422);
@@ -93,7 +95,7 @@ class WebRTCController extends Controller
 
         // TODO: Maybe add check to make sure user is online as well
         if ($user->hasFriend($userIdOfFriend)) {
-            event(new WebRTCAcceptConnectionRequest($user, $userIdOfFriend, $message));
+            event(new WebRTCEvent($user, $userIdOfFriend, $message, WebRTCEventTypes::AcceptConnectionRequest));
             return response()->json('Connection Request Sent');
         } else {
             return response()->json(trans('passwords.please_verify_email'), 422);
@@ -119,11 +121,10 @@ class WebRTCController extends Controller
 
         // TODO: Maybe add check to make sure user is online as well
         if ($user->hasFriend($userIdOfFriend)) {
-            event(new WebRTCNewIceCandidate($user, $userIdOfFriend, $message));
+            event(new WebRTCEvent($user, $userIdOfFriend, $message, WebRTCEventTypes::IceCandidates));
             return response()->json('Connection Request Sent');
         } else {
             return response()->json(trans('passwords.please_verify_email'), 422);
         }
     }
-// acceptConnectionRequest
 }

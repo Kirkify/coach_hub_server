@@ -50,6 +50,10 @@ class User extends Authenticatable
         return $this->hasMany(ContactRequest::class);
     }
 
+    public function relationships() {
+        return $this->hasMany(Relationship::class);
+    }
+
     public function profile() {
         return $this->hasOne(UserProfile::class);
     }
