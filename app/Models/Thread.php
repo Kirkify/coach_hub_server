@@ -43,6 +43,11 @@ class Thread extends Model
         return $this->hasMany(Message::class, 'thread_id', 'id');
     }
 
+    public function latestMessage()
+    {
+        return $this->hasOne(Message::class, 'thread_id', 'id')->latest();
+    }
+
     /**
      * Returns the latest message from a thread.
      *
@@ -152,6 +157,18 @@ class Thread extends Model
      */
     public function scopeForUserWithNewMessages(Builder $query, $userId)
     {
+        $participantTable = 'participants';
+        $messagesTable = 'messages';
+        $threadsTable = $this->getTable();
+        return $query->join($participantTable, $this->getQualifiedKeyName(), '=', $participantTable . '.thread_id')
+            ->where($participantTable . '.user_id', $userId)
+            ->whereNull($participantTable . '.deleted_at')
+            ->where(function (Builder $query) use ($participantTable, $threadsTable) {
+                $query->where($threadsTable . '.updated_at', '>', $this->getConnection()->raw($this->getConnection()->getTablePrefix() . $participantTable . '.last_read'))
+                    ->orWhereNull($participantTable . '.last_read');
+            })
+            ->select($threadsTable . '.*');
+             // ->get();
         $participantTable = 'participants';
         $threadsTable = 'threads';
         return $query->join($participantTable, $this->getQualifiedKeyName(), '=', $participantTable . '.thread_id')

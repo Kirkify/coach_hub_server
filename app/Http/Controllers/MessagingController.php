@@ -98,6 +98,7 @@ class MessagingController extends Controller
      */
     public function threads(Request $request)
     {
+        // return response()->json('Your password was incorrect', 422);
 //        $threads = DB::table('threads')
 //            ->join('participants', 'threads.id', '=', 'participants.thread_id')
 //            ->where('participants.user_id', $this->user->id)
@@ -120,7 +121,26 @@ class MessagingController extends Controller
 //            //->orderBy('participants.last_read', 'desc')
 //            // ->get();
 
-        $unreadThreads = Thread::forUserWithNewMessages($this->user->id)->latest('updated_at')->get();
+//        $unreadThreads = Thread::forUserWithNewMessages($this->user->id)
+//
+//        ->crossJoin('messages', 'threads.id', '=', 'messages.thread_id')
+//        ->get();
+
+        // $unreadThreads = Thread::forUserWithNewMessages($this->user->id)->latest('updated_at')->with('latestMessage')->get();
+        $threads = \App\Models\Thread::with('latestMessage')->get();
+        $threads->map(function ($thread) { return $thread->latestMessage; });
+        return;
+        $unreadThreads = Thread::with('latestMessage')->get();
+        $unreadThreads->map(function ($thread) {
+            return $thread->latestMessage;
+        });
+        return;
+        foreach ($unreadThreads as $thread) {
+            $latestMessage = $thread->latestMessage;
+            $cool = 1;
+            // $thread->updated_at = Carbon::parse($thread->updated_at)->diffForHumans();
+        }
+
         $unreadThreadIds = $unreadThreads->pluck('id')->toArray();
 
         $readThreads = Thread::forUser($this->user->id)->whereNotIn('threads.id', $unreadThreadIds)->latest('updated_at')->get();
