@@ -76,7 +76,7 @@ trait Messagable {
         return $this->threads()
             ->where(function (Builder $q) {
                 $q->whereNull('participants.last_read');
-                $q->orWhere('threads.updated_at', '>', $this->getConnection()->raw($this->getConnection()->getTablePrefix() . Models::table('participants') . '.last_read'));
+                $q->orWhere('threads.updated_at', '>', $this->getConnection()->raw($this->getConnection()->getTablePrefix() . 'participants.last_read'));
             })->get();
     }
 }

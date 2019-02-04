@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Message;
+use App\Models\Thread;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
@@ -17,8 +18,7 @@ class ThreadMessage implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     private $userId;
-    private $userWhoSentMessage;
-    public $message;
+    private $message;
 
     /**
      * The event's broadcast name.
@@ -35,11 +35,10 @@ class ThreadMessage implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($userId, Message $message, User $user)
+    public function __construct($userId, $message)
     {
         $this->userId = $userId;
         $this->message = $message;
-        $this->userWhoSentMessage = $user;
     }
 
     /**
@@ -61,11 +60,7 @@ class ThreadMessage implements ShouldBroadcast
     {
         return [
             'event' => static::class,
-            'data' => [
-                'message' => $this->message,
-                'first_name' => $this->userWhoSentMessage->first_name,
-                'last_name' => $this->userWhoSentMessage->last_name
-            ]
+            'data' => $this->message
         ];
     }
 }

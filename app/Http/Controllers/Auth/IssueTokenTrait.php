@@ -45,13 +45,21 @@ trait IssueTokenTrait
             $request->request->add(['refresh_token' => $refreshToken]);
         }
 
-        // If refresh_token grant and issued through our web app
+        // If email_only grant and issued through our web app
         if ($grantType == 'email_only' && $clientId === env('WEB_CLIENT_ID')) {
             // Grab the token from the cookie
             $request->request->add(['email_only_secret' => env('EMAIL_ONLY_SECRET')]);
         }
 
-        $proxy = Request::create('oauth/token?XDEBUG_SESSION_START=18195', 'POST');
+        $oauthRoute = 'oauth/token';
+
+        // TODO: Add check to make sure app not in production
+        $debugQueryParam = $request->query('XDEBUG_SESSION_START', '');
+        if ($debugQueryParam) {
+            $oauthRoute .= '?XDEBUG_SESSION_START=' . $debugQueryParam;
+        }
+
+        $proxy = Request::create($oauthRoute, 'POST');
 
         $response = Route::dispatch($proxy);
 

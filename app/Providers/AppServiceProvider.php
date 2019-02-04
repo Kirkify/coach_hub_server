@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
@@ -16,6 +17,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Apparently this is more moment.js friendly
+        // https://github.com/laravel/framework/issues/24983
+//        Carbon::serializeUsing(function (Carbon $timestamp) {
+//            return $timestamp->toIso8601ZuluString();
+//        });
+
         if ($this->app->environment() !== 'production') {
             DB::listen(function ($query) {
                 Log::info(

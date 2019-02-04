@@ -60,7 +60,7 @@ class WebRTCController extends Controller
     {
         $request->validate([
             'user_id' => 'required|integer',
-            'message' => 'required|string'
+            'message' => 'string'
         ]);
 
         $userIdOfFriend = $request->input('user_id');
@@ -108,7 +108,7 @@ class WebRTCController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return string
      */
-    public function sendIceCandidate(Request $request)
+    public function sendMessage(Request $request)
     {
         $request->validate([
             'user_id' => 'required|integer',
@@ -121,7 +121,7 @@ class WebRTCController extends Controller
 
         // TODO: Maybe add check to make sure user is online as well
         if ($user->hasFriend($userIdOfFriend)) {
-            event(new WebRTCEvent($user, $userIdOfFriend, $message, WebRTCEventTypes::IceCandidates));
+            event(new WebRTCEvent($user, $userIdOfFriend, $message, WebRTCEventTypes::UserMessage));
             return response()->json('Connection Request Sent');
         } else {
             return response()->json(trans('passwords.please_verify_email'), 422);

@@ -69,6 +69,22 @@ class Message extends Model
     {
         return $this->participants()->where('user_id', '!=', $this->user_id);
     }
+
+    /**
+     * Returns unread messages given the userId.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $userId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForThreads(Builder $query, $threadIds)
+    {
+        // TODO: See SO question
+        // https://stackoverflow.com/questions/54471949/laravel-subquery-question-get-the-most-recent-row-when-using-wherein
+        return $query->whereIn('thread_id', $threadIds)
+            ->take(100);
+    }
+
     /**
      * Returns unread messages given the userId.
      *

@@ -25,6 +25,7 @@ Route::group(['prefix' => '/messaging'], function () {
     Route::get('/threads', 'MessagingController@threads');
     Route::get('/thread/{thread}', 'MessagingController@thread');
     Route::post('/thread/{thread}', 'MessagingController@threadReply');
+    Route::get('/thread/mark-as-read/{thread}', 'MessagingController@markAsRead');
     Route::post('/compose', 'MessagingController@compose');
 });
 
@@ -59,6 +60,7 @@ Route::group(['prefix' => '/webrtc'], function () {
     Route::post('connect-with-user', 'WebRTC\WebRTCController@connectWithUser');
     Route::post('accept-connection-request', 'WebRTC\WebRTCController@acceptConnectionRequest');
     Route::post('send-ice-candidate', 'WebRTC\WebRTCController@sendIceCandidate');
+    Route::post('send-message', 'WebRTC\WebRTCController@sendMessage');
 });
 
 // EXAMPLE OF HOW TO USE SCOPES

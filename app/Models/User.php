@@ -8,10 +8,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\Traits\Messagable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasRoles, /*Messagable,*/ Notifiable;
+    use HasApiTokens, HasRoles, Messagable, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -30,6 +31,17 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'roles'
     ];
+
+    /**
+     * Route notifications for the Nexmo channel.
+     *
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return string
+     */
+    public function routeNotificationForNexmo($notification)
+    {
+        return $this->profile->phone_number;
+    }
 
     /**
      * Send the password reset notification.

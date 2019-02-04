@@ -43,9 +43,15 @@ class Thread extends Model
         return $this->hasMany(Message::class, 'thread_id', 'id');
     }
 
-    public function latestMessage()
+    public function lastMessage()
     {
         return $this->hasOne(Message::class, 'thread_id', 'id')->latest();
+    }
+
+    public function last_read() {
+        return $this->hasMany(Participant::class, 'thread_id', 'id')
+            ->where('user_id', 1)
+            ->select('last_read')->first();
     }
 
     /**
@@ -68,6 +74,12 @@ class Thread extends Model
     {
         return $this->hasMany(Participant::class, 'thread_id', 'id');
     }
+
+    public function participant()
+    {
+        return $this->hasOne(Participant::class, 'thread_id', 'id');
+    }
+
     /**
      * User's relationship.
      *
@@ -140,12 +152,43 @@ class Thread extends Model
      */
     public function scopeForUser(Builder $query, $userId)
     {
-        $participantsTable = 'participants';
-        $threadsTable = 'threads';
-        return $query->join($participantsTable, $this->getQualifiedKeyName(), '=', $participantsTable . '.thread_id')
-            ->where($participantsTable . '.user_id', $userId)
-            ->where($participantsTable . '.deleted_at', null)
-            ->select($threadsTable . '.*');
+        return $query->join('participants', 'threads.id', '=', 'participants.thread_id')
+            ->where('participants.user_id', $userId)
+            ->where('participants.deleted_at', null)
+            ->select('threads.*', 'participants.last_read')
+//            ->with(['messages' => function($query) {
+//                $query->latest();
+//            }])
+//            ->with(['participants' => function($query) {
+//                $query->select('participants.thread_id', 'participants.user_id', 'participants.is_admin');
+//                $query->with('user:id,first_name,last_name');
+//            }])
+            ->latest('updated_at');
+    }
+
+    /**
+     * Returns threads that the user is associated with.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $userId
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForId(Builder $query, $threadId)
+    {
+        return $query->where('threads.id', $threadId)
+            ->join('participants', 'threads.id', '=', 'participants.thread_id')
+            ->where('participants.thread_id', $threadId)
+            ->where('participants.deleted_at', null)
+            ->select('threads.*', 'participants.last_read')
+            ->with(['messages' => function($query) {
+                $query->latest();
+            }])
+            ->with(['participants' => function($query) {
+                $query->select('participants.thread_id', 'participants.user_id', 'participants.is_admin');
+                $query->with('user:id,first_name,last_name');
+            }])
+            ->latest('updated_at');
     }
     /**
      * Returns threads with new messages that the user is associated with.
@@ -243,6 +286,26 @@ class Thread extends Model
             // do nothing
         }
     }
+
+    /**
+     * Mark a thread as read for a user.
+     *
+     * @param int $userId
+     *
+     * @return Participant
+     */
+    public function markAsReadGetParticipant($userId)
+    {
+        try {
+            $participant = $this->getParticipantFromUser($userId);
+            $participant->last_read = new Carbon();
+            $participant->save();
+            return $participant;
+        } catch (ModelNotFoundException $e) { // @codeCoverageIgnore
+            return null;
+        }
+    }
+
     /**
      * See if the current thread is unread by the user.
      *

@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Events\ThreadMessage;
+use App\Http\Resources\Message\MessageResource;
+use App\Http\Resources\PartialUser\PartialUser;
+use App\Http\Resources\Participant\ParticipantResource;
+use App\Http\Resources\Thread\ThreadResource;
 use App\Models\ContactRequest;
 use App\Jobs\ContactRequestJob;
 use App\Models\User;
@@ -41,32 +45,27 @@ class MessagingController extends Controller
         {
             $thread->markAsRead($this->user->id);
 
-            $participants = DB::table('participants')
-                ->join('users', 'participants.user_id', '=', 'users.id')
-                ->where('participants.thread_id', '=', $thread->id)
-                ->where('users.id', '!=', $this->user->id)
-                ->select('users.id', 'users.first_name', 'users.last_name')
-                ->orderBy('users.first_name', 'asc')
-                ->get();
+            $relations = $this->getThreadRelations([$thread->id]);
 
-            $messages = DB::table('messages')
-                ->where('messages.thread_id', $thread->id)
-                ->join('users', 'messages.user_id', '=', 'users.id')
-                ->select('messages.body', 'messages.created_at', 'users.id', 'users.first_name', 'users.last_name')
-                ->orderBy('messages.created_at', 'desc')
-                ->get();
+            return ['data' => array_merge($relations, ['thread' => new ThreadResource($thread)])];
+        }
+        else
+        {
+            // TODO: Return 404
+        }
+    }
 
-            // Carbonize dates
-            foreach ($messages as $message) {
-                $message->created_at = Carbon::parse($message->created_at)->diffForHumans();
-            }
+    public function markAsRead(Thread $thread)
+    {
+        if ($thread->hasParticipant($this->user->id))
+        {
+            $participant = $thread->markAsReadGetParticipant($this->user->id);
 
-            return response()
-                ->json([
-                    'thread' => $thread,
-                    'messages' => $messages,
-                    'participants' => $participants
-                ]);
+            return ['data' => ['participant' => new ParticipantResource($participant)]];
+        }
+        else
+        {
+            // TODO: Return 404
         }
     }
 
@@ -78,80 +77,69 @@ class MessagingController extends Controller
 
         if ($thread->hasParticipant($this->user->id))
         {
-            Message::create([
+            $message = Message::create([
                 'thread_id' => $thread->id,
                 'user_id' => $this->user->id,
                 'body' => $request['body']
             ]);
 
+            // Mark the thread as read for current user
             $thread->markAsRead($this->user->id);
-        }
 
+            // Get all the participants for the thread
+            $participants = $thread->participants;
+
+            $uniqueUserIds = $participants->pluck('user_id')->unique()->toArray();
+            $users = User::query()->whereIn('id', $uniqueUserIds)->get();
+
+            // Since we manipulated the thread we need to re
+            $thread = $thread->fresh();
+
+            $response = [
+                'thread' => (new ThreadResource($thread))->resolve(),
+                'message' => (new MessageResource($message))->resolve(),
+                'participants' => (ParticipantResource::collection($participants))->resolve(),
+                'users' => (PartialUser::collection($users))->resolve()
+            ];
+
+            foreach ($uniqueUserIds as $userId) {
+                // We don't need to send a socket message to the user who replied
+                // As they will receive the same message during the response
+                if ($userId !== $this->user->id) {
+                    event(new ThreadMessage($userId, $response));
+                }
+            }
+
+            return [ 'data' => $response ];
+        }
+        // TODO: Return error as user is not a participant in this thread
         return response()->json();
+    }
+
+    private function getThreadRelations($threadIds) {
+        $messages = Message::forThreads($threadIds)->get();
+        $participants = Participant::forThreads($threadIds)->get();
+        $uniqueUserIds = $participants->pluck('user_id')->unique()->toArray();
+        $users = User::query()->whereIn('id', $uniqueUserIds)->get();
+
+        return [
+            'messages' => MessageResource::collection($messages),
+            'participants' => ParticipantResource::collection($participants),
+            'users' => PartialUser::collection($users)
+        ];
     }
     /**
      * Handle a registration request for the application.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Laravel\Passport\Http\Controllers\AccessTokenController  $accessTokenController
-     * @return \Illuminate\Http\Response
+     * @return array
      */
     public function threads(Request $request)
     {
-        // return response()->json('Your password was incorrect', 422);
-//        $threads = DB::table('threads')
-//            ->join('participants', 'threads.id', '=', 'participants.thread_id')
-//            ->where('participants.user_id', $this->user->id)
-//            ->where('participants.deleted_at', null);
-//
-//        $participantTable = Models::table('participants');
-//        $threadsTable = Models::table('threads');
-//
-//        return $query->join($participantTable, $this->getQualifiedKeyName(), '=', $participantTable . '.thread_id')
-//            ->where($participantTable . '.user_id', $userId)
-//            ->whereNull($participantTable . '.deleted_at')
-//            ->where(function (Builder $query) use ($participantTable, $threadsTable) {
-//                $query->where($threadsTable . '.updated_at', '>', $this->getConnection()->raw($this->getConnection()->getTablePrefix() . $participantTable . '.last_read'))
-//                    ->orWhereNull($participantTable . '.last_read');
-//            })
-//            ->select($threadsTable . '.*');
-//
-//            //->leftJoin('messages', 'threads.id', '=', 'messages.thread_id')
-//            // ->select('threads.id', 'threads.subject', 'participants.last_read')
-//            //->orderBy('participants.last_read', 'desc')
-//            // ->get();
-
-//        $unreadThreads = Thread::forUserWithNewMessages($this->user->id)
-//
-//        ->crossJoin('messages', 'threads.id', '=', 'messages.thread_id')
-//        ->get();
-
-        // $unreadThreads = Thread::forUserWithNewMessages($this->user->id)->latest('updated_at')->with('latestMessage')->get();
-        $threads = \App\Models\Thread::with('latestMessage')->get();
-        $threads->map(function ($thread) { return $thread->latestMessage; });
-        return;
-        $unreadThreads = Thread::with('latestMessage')->get();
-        $unreadThreads->map(function ($thread) {
-            return $thread->latestMessage;
-        });
-        return;
-        foreach ($unreadThreads as $thread) {
-            $latestMessage = $thread->latestMessage;
-            $cool = 1;
-            // $thread->updated_at = Carbon::parse($thread->updated_at)->diffForHumans();
-        }
-
-        $unreadThreadIds = $unreadThreads->pluck('id')->toArray();
-
-        $readThreads = Thread::forUser($this->user->id)->whereNotIn('threads.id', $unreadThreadIds)->latest('updated_at')->get();
-
-        $mergedThreads = $unreadThreads->merge($readThreads);
-
-//        foreach ($mergedThreads as $thread) {
-//            $thread->updated_at = Carbon::parse($thread->updated_at)->diffForHumans();
-//        }
-
-        return $mergedThreads;
+        $threads = Thread::forUser($this->user->id)->get();
+        $threadIds = $threads->pluck('id')->toArray();
+        $relations = $this->getThreadRelations($threadIds);
+        return ['data' => array_merge($relations, ['threads' => ThreadResource::collection($threads)])];
     }
 
     public function compose(Request $request)
@@ -180,22 +168,38 @@ class MessagingController extends Controller
 
         // Add current user as a new participant
         // Set last read to now as they created it
-        Participant::create([
+        $participants = collect();
+
+        $participants->push(Participant::create([
             'thread_id' => $thread->id,
             'user_id' => $this->user->id,
-            'last_read' => new Carbon
-        ]);
+            'last_read' => new Carbon,
+            'is_admin' => 1
+        ]));
 
         $userIds = array_column($request['participants'], 'id');
-        $thread->addParticipant($userIds);
 
-        foreach ($request['participants'] as $participant) {
-            event(new ThreadMessage($participant["id"], $message, $this->user));
+        foreach ($userIds as $userId) {
+            $participants->push(Participant::create([
+                'thread_id' => $thread->id,
+                'user_id' => $userId
+            ]));
         }
 
-        // event(new ThreadMessage())
+        $uniqueUserIds = $participants->pluck('user_id')->unique()->toArray();
+        $users = User::query()->whereIn('id', $uniqueUserIds)->get();
 
+        $response = [
+            'thread' => (new ThreadResource($thread))->resolve(),
+            'message' => (new MessageResource($message))->resolve(),
+            'participants' => (ParticipantResource::collection($participants))->resolve(),
+            'users' => (PartialUser::collection($users))->resolve()
+        ];
 
-        return response()->json();
+        foreach ($userIds as $userId) {
+            event(new ThreadMessage($userId, $response));
+        }
+
+        return [ 'data' => $response ];
     }
 }
