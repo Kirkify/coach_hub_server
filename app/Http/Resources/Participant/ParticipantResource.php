@@ -16,6 +16,7 @@ class ParticipantResource extends JsonResource
      */
     public function toArray($request)
     {
+        $currentUser = Auth::user()->id === $this->user_id;
         return [
             // Let's hide these attributes for now
 //            'created_at' => (string) $this->created_at,
@@ -25,7 +26,10 @@ class ParticipantResource extends JsonResource
             'thread_id' => $this->thread_id,
             'user_id' => $this->user_id,
             'is_admin' => $this->is_admin,
-            'last_read' => $this->when(Auth::user()->id === $this->user_id, (string) $this->last_read)
+            $this->mergeWhen(Auth::user()->id === $this->user_id, [
+                'last_read' => (string) $this->last_read,
+                'current_user' => true,
+            ]),
         ];
     }
 }

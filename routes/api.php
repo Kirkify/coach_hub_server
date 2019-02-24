@@ -22,10 +22,12 @@ Route::get('/dashboard', 'Dashboard\DashboardController@index')->name('dashboard
 // Messaging Routes
 Route::group(['prefix' => '/messaging'], function () {
     Route::get('/contacts', 'MessagingController@contacts');
+    Route::get('/unread-count', 'MessagingController@unreadCount');
     Route::get('/threads', 'MessagingController@threads');
     Route::get('/thread/{thread}', 'MessagingController@thread');
     Route::post('/thread/{thread}', 'MessagingController@threadReply');
     Route::get('/thread/mark-as-read/{thread}', 'MessagingController@markAsRead');
+    Route::get('/thread/mark-as-unread/{thread}', 'MessagingController@markAsUnread');
     Route::post('/compose', 'MessagingController@compose');
 });
 

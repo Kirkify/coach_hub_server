@@ -142,6 +142,24 @@ class Thread extends Model
         }
         return $users->toArray();
     }
+
+    public function scopeForParticipant(Builder $query, $userId, $participantId)
+    {
+        return $query->join('participants', 'threads.id', '=', 'participants.thread_id')
+            ->where('participants.user_id', $userId)
+            ->where('participants.user_id', $participantId)
+            ->where('participants.deleted_at', null)
+            ->select('threads.*', 'participants.last_read')
+//            ->with(['messages' => function($query) {
+//                $query->latest();
+//            }])
+//            ->with(['participants' => function($query) {
+//                $query->select('participants.thread_id', 'participants.user_id', 'participants.is_admin');
+//                $query->with('user:id,first_name,last_name');
+//            }])
+            ->first();
+    }
+
     /**
      * Returns threads that the user is associated with.
      *
@@ -299,6 +317,25 @@ class Thread extends Model
         try {
             $participant = $this->getParticipantFromUser($userId);
             $participant->last_read = new Carbon();
+            $participant->save();
+            return $participant;
+        } catch (ModelNotFoundException $e) { // @codeCoverageIgnore
+            return null;
+        }
+    }
+
+    /**
+     * Mark a thread as unread for a user.
+     *
+     * @param int $userId
+     *
+     * @return Participant
+     */
+    public function markAsUnreadGetParticipant($userId)
+    {
+        try {
+            $participant = $this->getParticipantFromUser($userId);
+            $participant->last_read = null;
             $participant->save();
             return $participant;
         } catch (ModelNotFoundException $e) { // @codeCoverageIgnore

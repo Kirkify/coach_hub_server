@@ -85,6 +85,8 @@ class Message extends Model
             ->take(100);
     }
 
+    // TODO: Might need to update this query according to this issue
+    // https://github.com/cmgmyr/laravel-messenger/issues/280
     /**
      * Returns unread messages given the userId.
      *
@@ -95,7 +97,7 @@ class Message extends Model
     public function scopeUnreadForUser(Builder $query, $userId)
     {
         return $query->has('thread')
-            ->where('user_id', '!=', $userId)
+            // ->where('user_id', '!=', $userId)
             ->whereHas('participants', function (Builder $query) use ($userId) {
                 $query->where('user_id', $userId)
                     ->where(function (Builder $q) {

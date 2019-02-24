@@ -36,7 +36,12 @@ class MessagingController extends Controller
     public function contacts()
     {
         $users = User::all(['id', 'first_name', 'last_name'])->except($this->user->id);
-        return $users;
+        return ['data' => PartialUser::collection($users)];
+    }
+
+    public function unreadCount() {
+        $unread = Message::unreadForUser($this->user->id)->count();
+        return ['data' => $unread];
     }
 
     public function thread(Thread $thread)
@@ -60,6 +65,20 @@ class MessagingController extends Controller
         if ($thread->hasParticipant($this->user->id))
         {
             $participant = $thread->markAsReadGetParticipant($this->user->id);
+
+            return ['data' => ['participant' => new ParticipantResource($participant)]];
+        }
+        else
+        {
+            // TODO: Return 404
+        }
+    }
+
+    public function markAsUnread(Thread $thread)
+    {
+        if ($thread->hasParticipant($this->user->id))
+        {
+            $participant = $thread->markAsUnreadGetParticipant($this->user->id);
 
             return ['data' => ['participant' => new ParticipantResource($participant)]];
         }
@@ -156,6 +175,18 @@ class MessagingController extends Controller
         $subject = $request['subject'] ?? '';
         $body = $request['body'];
 
+        $userIds = array_column($request['participants'], 'id');
+        // By default participants are NOT admins
+        $isParticipantAdmin = 0;
+        // If there is only one other participant
+        if (count($userIds) === 1) {
+            // We only allow subjects for group conversations
+            $subject = '';
+            // If there is only one other participant, we will make them admin as well
+            $isParticipantAdmin = 1;
+            // TODO: We need to check to make sure they don't already have any threads with that user
+        }
+
         $thread = Thread::create([
            'subject' => $subject
         ]);
@@ -177,12 +208,12 @@ class MessagingController extends Controller
             'is_admin' => 1
         ]));
 
-        $userIds = array_column($request['participants'], 'id');
 
         foreach ($userIds as $userId) {
             $participants->push(Participant::create([
                 'thread_id' => $thread->id,
-                'user_id' => $userId
+                'user_id' => $userId,
+                'is_admin' => $isParticipantAdmin
             ]));
         }
 
