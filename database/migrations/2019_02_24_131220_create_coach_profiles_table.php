@@ -14,18 +14,13 @@ class CreateCoachProfilesTable extends Migration
     public function up()
     {
         Schema::create('coach_profiles', function (Blueprint $table) {
-            $table->integer('user_id')->unsigned()->nullable();
+            $table->increments('id');
+            $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->string('sport_id');
-            $table->string('profile_pic_url')->nullable();
-            $table->string('phone_number');
-            $table->date('date_of_birth');
-            $table->tinyInteger('gender');
-            $table->string('street');
-            $table->string('apt');
-            $table->string('city');
-            $table->string('province');
-            $table->string('postal_code');
+            $table->longText('coaching_experience');
+            $table->longText('athletic_highlights');
+            $table->longText('session_plan');
+            $table->string('one_sentence_bio', 180);
             $table->timestamps();
         });
     }

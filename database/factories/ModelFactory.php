@@ -5,6 +5,8 @@ use App\Models\Message;
 use App\Models\Thread;
 use App\Models\Participant;
 use App\Models\User;
+use App\Models\CoachProfile;
+
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -56,4 +58,13 @@ $factory->define(Participant::class, function (Faker $faker) {
     ];
 });
 
+
+$factory->define(CoachProfile::class, function (Faker $faker) {
+    return [
+        'coaching_experience'               => $faker->text(150),
+        'athletic_highlights'               => $faker->text(150),
+        'session_plan'                      => $faker->text(150),
+        'one_sentence_bio'                  => $faker->text(150),
+    ];
+});
 // 'birthday' => $faker->dateTimeBetween('-100 years', '-18 years'),

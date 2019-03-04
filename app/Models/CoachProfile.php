@@ -4,26 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserProfile extends Model
+class CoachProfile extends Model
 {
-    protected $primaryKey = 'user_id';
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'profile_pic_url',
-        'phone_number',
-        'date_of_birth',
-        'gender',
-        'street_number',
-        'street_name',
-        'apt_number',
-        'city',
-        'province',
-        'postal_code'
+        'coaching_experience', 'athletic_highlights',
+        'session_plan', 'one_sentence_bio'
     ];
 
     /**
@@ -32,5 +22,16 @@ class UserProfile extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get all of the sports for this profile.
+     */
+    public function sports()
+    {
+        return $this->morphToMany(
+            Sport::class,
+            'sportable'
+        );
     }
 }

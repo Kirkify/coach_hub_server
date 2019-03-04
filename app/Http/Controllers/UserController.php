@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserProfile\UserProfileResource;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
@@ -110,12 +111,12 @@ class UserController extends Controller
 
         if ($userProfile) {
             if ($userProfile->update($request->all())) {
-                return response()->json($userProfile);
+                return ['data' => new UserProfileResource($userProfile)];
             }
         } else {
             $profile = new UserProfile($request->all());
             if ($user->profile()->save($profile)) {
-                return response()->json($profile);
+                return ['data' => new UserProfileResource($profile)];
             }
         }
 

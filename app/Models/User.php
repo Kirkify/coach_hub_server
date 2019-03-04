@@ -70,6 +70,10 @@ class User extends Authenticatable
         return $this->hasOne(UserProfile::class);
     }
 
+    public function coachProfile() {
+        return $this->hasOne(CoachProfile::class);
+    }
+
     public function confirmEmail() {
         return $this->hasOne(ConfirmEmail::class);
     }

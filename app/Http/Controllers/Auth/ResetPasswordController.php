@@ -29,7 +29,7 @@ class ResetPasswordController extends Controller
      * @param  string  $response
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
-    protected function sendResetResponse($response)
+    protected function sendResetResponse($request, $response)
     {
         return response()->json(trans($response));
     }
@@ -56,6 +56,7 @@ class ResetPasswordController extends Controller
         // $this->middleware('guest');
     }
 
+    // This overriders the resetPassword method in trait
     /**
      * Reset the given user's password.
      *
