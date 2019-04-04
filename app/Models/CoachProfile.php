@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CoachProfile extends Model
 {
+    protected $with = ['sports'];
+
     /**
      * The attributes that are mass assignable.
      *

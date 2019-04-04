@@ -324,6 +324,10 @@ class Thread extends Model
         }
     }
 
+    // TODO: We should grab the last message from the thread
+    // and mark the last_read to just before that.  That way when
+    // We fetch the message unread count we only get one unread for that thread
+    // Instead of all of them.
     /**
      * Mark a thread as unread for a user.
      *

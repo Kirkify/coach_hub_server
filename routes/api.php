@@ -19,6 +19,11 @@ Route::post('/contact', 'ContactController@contact')->name('contact');
 
 Route::get('/dashboard', 'Dashboard\DashboardController@index')->name('dashboard');
 
+Route::group(['prefix' => '/coach-hub'], function () {
+    Route::get('/initial-state', 'Coach\CoachController@initialState');
+    Route::post('/apply-to-coach', 'Coach\CoachController@application');
+});
+
 // Messaging Routes
 Route::group(['prefix' => '/messaging'], function () {
     Route::get('/contacts', 'MessagingController@contacts');

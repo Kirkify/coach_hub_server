@@ -15,10 +15,6 @@ class ContactController extends Controller
     {
     }
 
-    public function t(Request $request)
-    {
-        return $request->user();
-    }
     /**
      * Handle a registration request for the application.
      *
