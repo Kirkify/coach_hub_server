@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CoachController extends Controller
 {
+    private $user;
+
     /**
      * Create a new controller instance.
      *
@@ -24,10 +26,11 @@ class CoachController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+        $this->user = Auth::user();
     }
 
     /**
-     * Handle a registration request for the application.
+     * Get all required state for coaches
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Laravel\Passport\Http\Controllers\AccessTokenController  $accessTokenController
@@ -35,8 +38,7 @@ class CoachController extends Controller
      */
     public function initialState(Request $request)
     {
-        $user = $request->user();
-        $coachProfile = $user->coachProfile;
+        $coachProfile = $this->user->coachProfile;
 
         $sports = Sport::all();
 
@@ -64,18 +66,17 @@ class CoachController extends Controller
             'one_sentence_bio' => 'required|string|max:180'
         ]);
 
-        $user = $request->user();
-        $coachProfile = $user->coachProfile;
+        $coachProfile = $this->user->coachProfile;
 
         if ($coachProfile) {
             return response()->json('A Coach Profile already exists for you', 422);
         } else {
-            $userProfile = $user->userProfile;
+            $userProfile = $this->user->userProfile;
 
             // Before completing a coach profile the user must have a user profile
             if ($userProfile) {
                 // Save the new coach profile to the user
-                $coachProfile = $user->coachProfile()->create([
+                $coachProfile = $this->user->coachProfile()->create([
                     'coaching_experience' => $request->input('coaching_experience'),
                     'athletic_highlights' => $request->input('athletic_highlights'),
                     'session_plan' => $request->input('session_plan'),

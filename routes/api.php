@@ -22,6 +22,24 @@ Route::get('/dashboard', 'Dashboard\DashboardController@index')->name('dashboard
 Route::group(['prefix' => '/coach-hub'], function () {
     Route::get('/initial-state', 'Coach\CoachController@initialState');
     Route::post('/apply-to-coach', 'Coach\CoachController@application');
+
+    Route::group(['prefix' => '/coach'], function () {
+
+        // Route::resource('programs', 'Coach\ProgramController');
+        Route::apiResource('programs', 'Coach\ProgramController');
+
+//        Route::group(['prefix' => '/programs'], function () {
+//            Route::get('', 'Coach\ProgramController@getAll');
+//            Route::get('/{program}', 'Coach\ProgramController@get');
+//            Route::post('/{program}', 'Coach\ProgramController@update');
+//            Route::post('/create', 'Coach\ProgramController@create');
+//        });
+
+        Route::group(['prefix' => '/locations'], function () {
+            Route::get('', 'Coach\LocationController@get');
+            Route::post('/create', 'Coach\LocationController@create');
+        });
+    });
 });
 
 // Messaging Routes

@@ -78,6 +78,14 @@ class User extends Authenticatable
         return $this->hasOne(ConfirmEmail::class);
     }
 
+    public function programs() {
+        return $this->hasMany(Program::class);
+    }
+
+    public function locations() {
+        return $this->hasMany(Location::class);
+    }
+
     public function hasFriend($userId) {
         // TODO: Implement friend list table
         return true;
