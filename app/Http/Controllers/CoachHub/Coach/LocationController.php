@@ -44,7 +44,7 @@ class LocationController extends Controller
      */
     public function show(Location $location)
     {
-        $this->_confirmUserOwnsItem($location->coach->id);
+        $this->_confirmUserOwnsItem($location->coach_base_profile_id);
 
         return ['data' => new LocationResource($location)];
     }
@@ -77,7 +77,7 @@ class LocationController extends Controller
     {
         $result = $this->_validateInput($request);
 
-        $this->_confirmUserOwnsItem($location->coach->id);
+        $this->_confirmUserOwnsItem($location->coach_base_profile_id);
 
         if ($location->update($result)) {
             return ['data' => new LocationResource($location)];
@@ -94,7 +94,7 @@ class LocationController extends Controller
      */
     public function destroy(Location $location, Request $request)
     {
-        $this->_confirmUserOwnsItem($location->coach->id);
+        $this->_confirmUserOwnsItem($location->coach_base_profile_id);
 
         if ($location->delete()) {
             return response()->json();

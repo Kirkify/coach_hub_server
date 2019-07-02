@@ -47,7 +47,7 @@ class RegistrationController extends Controller
      */
     public function destroy(Registration $registration)
     {
-        $this->_confirmUserHasProgram($registration->coach->id);
+        $this->_confirmUserHasProgram($registration->coach_base_profile_id);
 
         if ($registration->delete()) {
             return response()->json();
@@ -65,7 +65,7 @@ class RegistrationController extends Controller
      */
     public function show(Registration $registration)
     {
-        $this->_confirmUserHasProgram($registration->coach->id);
+        $this->_confirmUserHasProgram($registration->coach_base_profile_id);
 
         return ['data' => new RegistrationResource($registration)];
     }
@@ -100,7 +100,7 @@ class RegistrationController extends Controller
     {
         $result = $this->_validateInput($request);
 
-        $this->_confirmUserHasProgram($registration->coach->id);
+        $this->_confirmUserHasProgram($registration->coach_base_profile_id);
 
         if ($registration->update($result)) {
             return ['data' => new RegistrationResource($registration)];

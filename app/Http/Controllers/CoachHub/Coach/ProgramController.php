@@ -47,7 +47,7 @@ class ProgramController extends Controller
      */
     public function destroy(Program $program)
     {
-        $this->_confirmUserHasProgram($program->coach->id);
+        $this->_confirmUserHasProgram($program->coach_base_profile_id);
 
         if ($program->delete()) {
             return response()->json();
@@ -65,7 +65,7 @@ class ProgramController extends Controller
      */
     public function show(Program $program)
     {
-        $this->_confirmUserHasProgram($program->coach->id);
+        $this->_confirmUserHasProgram($program->coach_base_profile_id);
 
         return ['data' => new ProgramResource($program)];
     }
@@ -100,7 +100,7 @@ class ProgramController extends Controller
     {
         $result = $this->_validateInput($request);
 
-        $this->_confirmUserHasProgram($program->coach->id);
+        $this->_confirmUserHasProgram($program->coach_base_profile_id);
 
         if ($program->update($result)) {
             $program->tags()->sync($result['tags']);

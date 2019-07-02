@@ -51,7 +51,7 @@ class TagController extends Controller
      */
     public function destroy(Tag $program)
     {
-        $this->_confirmUserHasProgram($program->coach->id);
+        $this->_confirmUserHasProgram($program->coach_base_profile_id);
 
         if ($program->delete()) {
             return response()->json();
@@ -69,7 +69,7 @@ class TagController extends Controller
      */
     public function show(Tag $program)
     {
-        $this->_confirmUserHasProgram($program->coach->id);
+        $this->_confirmUserHasProgram($program->coach_base_profile_id);
 
         return ['data' => $program];
     }
@@ -103,7 +103,7 @@ class TagController extends Controller
     {
         $result = $this->_validateInput($request);
 
-        $this->_confirmUserHasProgram($program->coach->id);
+        $this->_confirmUserHasProgram($program->coach_base_profile_id);
 
         if ($program->update($result)) {
             return ['data' => $program];
