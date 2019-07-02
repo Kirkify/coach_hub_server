@@ -15,8 +15,8 @@ class CreateCoachProfilesTable extends Migration
     {
         Schema::create('coach_profiles', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->integer('coach_base_profile_id')->unsigned();
+            $table->foreign('coach_base_profile_id')->references('id')->on('coach_base_profiles')->onDelete('cascade');
             $table->longText('coaching_experience');
             $table->longText('athletic_highlights');
             $table->longText('session_plan');

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\CoachHub\Registration;
 use App\Notifications\ResetPasswordNotification;
 // use Cmgmyr\Messenger\Traits\Messagable;
 use Illuminate\Notifications\Notifiable;
@@ -9,6 +10,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use App\Models\Traits\Messagable;
+use App\Models\CoachHub\Location;
+use App\Models\CoachHub\Tag;
+use App\Models\CoachHub\Coach\CoachBaseProfile;
+use App\Models\CoachHub\Program;
 
 class User extends Authenticatable
 {
@@ -70,20 +75,12 @@ class User extends Authenticatable
         return $this->hasOne(UserProfile::class);
     }
 
-    public function coachProfile() {
-        return $this->hasOne(CoachProfile::class);
+    public function coachBaseProfile() {
+        return $this->hasOne(CoachBaseProfile::class);
     }
 
     public function confirmEmail() {
         return $this->hasOne(ConfirmEmail::class);
-    }
-
-    public function programs() {
-        return $this->hasMany(Program::class);
-    }
-
-    public function locations() {
-        return $this->hasMany(Location::class);
     }
 
     public function hasFriend($userId) {

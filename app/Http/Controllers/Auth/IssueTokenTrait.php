@@ -22,8 +22,8 @@ trait IssueTokenTrait
 
         // If user has supplied a client id, client secret and scope, use it,
         // Else use the default Web Client keys and default '*' scope
-        $clientId = $request->input('client_id', env('WEB_CLIENT_ID'));
-        $clientSecret = $request->input('client_secret', env('WEB_CLIENT_SECRET'));
+        $clientId = $request->input('client_id', config('secrets.web_client_id'));
+        $clientSecret = $request->input('client_secret', config('secrets.web_client_secret'));
         $scope = $request->input('scope', '*');
 
         $params = [
@@ -39,16 +39,16 @@ trait IssueTokenTrait
         $request->request->add($params);
 
         // If refresh_token grant and issued through our web app
-        if ($grantType == 'refresh_token' && $clientId === env('WEB_CLIENT_ID')) {
+        if ($grantType == 'refresh_token' && $clientId === config('secrets.web_client_id')) {
             // Grab the token from the cookie
             $refreshToken = $request->cookie('refreshToken');
             $request->request->add(['refresh_token' => $refreshToken]);
         }
 
         // If email_only grant and issued through our web app
-        if ($grantType == 'email_only' && $clientId === env('WEB_CLIENT_ID')) {
+        if ($grantType == 'email_only' && $clientId === config('secrets.web_client_id')) {
             // Grab the token from the cookie
-            $request->request->add(['email_only_secret' => env('EMAIL_ONLY_SECRET')]);
+            $request->request->add(['email_only_secret' => config('secrets.email_only_secret')]);
         }
 
         $oauthRoute = 'oauth/token';
@@ -79,7 +79,7 @@ trait IssueTokenTrait
                 $jwt->roles = $user->getRoleNames();
 
                 // If issued through the Web
-                if ($clientId === env('WEB_CLIENT_ID')) {
+                if ($clientId === config('secrets.web_client_id')) {
 
                     // We set the refresh_token as an HTTP Only cookie
                     $response->cookie(

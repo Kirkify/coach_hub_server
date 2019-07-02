@@ -29,7 +29,7 @@ class Captcha implements Rule
         $http = new Client();
         $response = $http->post('https://www.google.com/recaptcha/api/siteverify', [
             'form_params' => [
-                'secret' => env('GOOGLE_RECAPTCHA_SECRET'),
+                'secret' => config('secrets.google_recaptcha'),
                 'response' => $value,
                 'remoteip' => request()->ip()
             ],

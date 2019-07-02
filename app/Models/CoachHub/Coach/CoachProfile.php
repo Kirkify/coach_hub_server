@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\CoachHub\Coach;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CoachHub\Sport;
 
 class CoachProfile extends Model
 {
@@ -21,9 +22,9 @@ class CoachProfile extends Model
     /**
      * Get the user that owns the profile.
      */
-    public function user()
+    public function coachBaseProfile()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(CoachBaseProfile::class);
     }
 
     /**

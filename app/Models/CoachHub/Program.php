@@ -1,13 +1,28 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\CoachHub;
 
+use App\Models\CoachHub\Coach\CoachBaseProfile;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Program extends Model
 {
     use SoftDeletes;
+
+    /**
+     * The relations to eager load on every query.
+     *
+     * @var array
+     */
+    protected $with = ['tags'];
+
+    /**
+     * The relations to eager load on every query.
+     *
+     * @var array
+     */
+    protected $withCount = ['registrations'];
 
     /**
      * Retrieve the model for a bound value.
@@ -26,17 +41,17 @@ class Program extends Model
      * @var array
      */
     protected $fillable = [
-        'program_title', 'program_description',
-        'registration_start', 'registration_end',
-        'program_start', 'program_end', 'location_id'
+        'program_title', 'program_description', 'category',
+        'registration_start', 'registration_end', 'has_wait_list',
+        'program_start', 'program_end', 'max_participants', 'location_id'
     ];
 
     /**
-     * Get the user that owns the profile.
+     * Get the coach that owns the profile.
      */
-    public function user()
+    public function coach()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(CoachBaseProfile::class);
     }
 
     /**
@@ -48,12 +63,20 @@ class Program extends Model
     }
 
     /**
+     * Get the phone record associated with the user.
+     */
+    public function registrations()
+    {
+        return $this->hasMany(Registration::class);
+    }
+
+    /**
      * Get all of the tags for the program.
      */
     public function tags()
     {
         return $this->morphToMany(
-            'App\Tag',
+            Tag::class,
             'taggable'
         );
     }

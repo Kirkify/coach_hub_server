@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\CoachHub;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CoachHub\Coach\CoachProfile;
 
 class Sport extends Model
 {

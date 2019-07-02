@@ -44,11 +44,15 @@ class UsersTableSeeder extends Seeder
         // Give admin role
         $kirk->assignRole(Role::findByName(config('role.names.super_admin')));
 
-        $coachProfile = factory(CoachProfile::class)->make();
+        $coachBaseProfile = factory(\App\Models\CoachHub\Coach\CoachBaseProfile::class)->make();
 
-        $kirk->coachProfile()->save($coachProfile);
+        $kirk->coachBaseProfile()->save($coachBaseProfile);
 
-        $coachProfile->sports()->sync([1,2,3]);
+//        $coachProfile = factory(CoachProfile::class)->make();
+//
+//        $coachBaseProfile->coachProfiles()->save($coachProfile);
+//
+//        $coachProfile->sports()->sync([1,2,3]);
 
         factory(User::class, 50)->create()->each(function ($u) {
             // $u->posts()->save(factory(App\Post::class)->make());

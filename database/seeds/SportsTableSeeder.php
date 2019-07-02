@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Models\Sport;
+use App\Models\CoachHub\Sport;
 
 class SportsTableSeeder extends Seeder
 {

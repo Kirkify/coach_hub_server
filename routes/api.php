@@ -19,26 +19,22 @@ Route::post('/contact', 'ContactController@contact')->name('contact');
 
 Route::get('/dashboard', 'Dashboard\DashboardController@index')->name('dashboard');
 
-Route::group(['prefix' => '/coach-hub'], function () {
-    Route::get('/initial-state', 'Coach\CoachController@initialState');
-    Route::post('/apply-to-coach', 'Coach\CoachController@application');
+Route::group(['prefix' => '/coach-hub', 'namespace' => 'CoachHub'], function () {
+    Route::get('/initial-state', 'CoachHubController@initialState');
+    Route::post('/coach-profile', 'CoachHubController@createCoachBaseProfile');
+    Route::post('/coach-profile/{profile}', 'CoachHubController@updateCoachBaseProfile');
 
-    Route::group(['prefix' => '/coach'], function () {
+    Route::group(['prefix' => '/coach', 'namespace' => 'Coach'], function () {
+        Route::get('/initial-state', 'CoachController@initialState');
+        Route::post('/apply-to-coach', 'CoachController@application');
+        Route::apiResource('locations', 'LocationController');
+        Route::apiResource('programs', 'ProgramController');
+        Route::apiResource('tags', 'TagController');
+        Route::apiResource('registrations', 'RegistrationController');
+    });
 
-        // Route::resource('programs', 'Coach\ProgramController');
-        Route::apiResource('programs', 'Coach\ProgramController');
-
-//        Route::group(['prefix' => '/programs'], function () {
-//            Route::get('', 'Coach\ProgramController@getAll');
-//            Route::get('/{program}', 'Coach\ProgramController@get');
-//            Route::post('/{program}', 'Coach\ProgramController@update');
-//            Route::post('/create', 'Coach\ProgramController@create');
-//        });
-
-        Route::group(['prefix' => '/locations'], function () {
-            Route::get('', 'Coach\LocationController@get');
-            Route::post('/create', 'Coach\LocationController@create');
-        });
+    Route::group(['prefix' => '/search', 'namespace' => 'Search'], function () {
+        Route::get('coaches', 'SearchController@coachIndex');
     });
 });
 
@@ -62,8 +58,6 @@ Route::group(['prefix' => '/user'], function () {
     Route::post('/email', 'UserController@updateEmail');
     Route::post('/password', 'UserController@updatePassword');
 });
-
-
 
 // Authentication Routes
 Route::post('/logout', 'Auth\AuthenticationController@logout')->name('logout');
@@ -98,63 +92,63 @@ Route::group(['prefix' => '/webrtc'], function () {
 //    // Access token has either "check-status" or "place-orders" scope...
 //})->middleware('scope:check-status,place-orders');
 
-Route::get('/cool', function() {
+//Route::get('/cool', function() {
+//
+//    $data = [
+//        'event' => 'UserSignedUp',
+//        'data' => [
+//            'username' => 'JohnDoe'
+//        ]
+//    ];
+//
+//    Redis::publish('test-channel', json_encode($data));
+//
+//
+//    // Redis::set('name', 'Kirk');
+//    // return Redis::get('name');
+//});
 
-    $data = [
-        'event' => 'UserSignedUp',
-        'data' => [
-            'username' => 'JohnDoe'
-        ]
-    ];
+//Route::get('/event', function() {
+//
+//    $user = App\Models\User::find(1);
+//
+//    event(new \App\Events\ServerCreated($user));
+//
+//    // Redis::set('name', 'Kirk');
+//    // return Redis::get('name');
+//});
 
-    Redis::publish('test-channel', json_encode($data));
-
-
-    // Redis::set('name', 'Kirk');
-    // return Redis::get('name');
-});
-
-Route::get('/event', function() {
-
-    $user = App\Models\User::find(1);
-
-    event(new \App\Events\ServerCreated($user));
-
-    // Redis::set('name', 'Kirk');
-    // return Redis::get('name');
-});
-
-Route::get('users', function() {
-    return App\Models\User::latest('id')->get();
-});
-
-Route::get('/redi', function() {
-    Redis::set('name', 'Kirk');
-    return Redis::get('name');
-});
-
-Route::get('/private-event', function() {
-
-    // Create a new fake user
-    $faker = Faker\Factory::create();
-
-    // Create a new user
-    $fakeUser = new App\Models\User();
-    $fakeUser->first_name = $faker->firstName();
-    $fakeUser->last_name  = $faker->lastName;
-    $fakeUser->email      = $faker->email;
-    $fakeUser->password   = Hash::make('111111');
-    $fakeUser->verified   = 1;
-    $fakeUser->save();
-
-    // Only this user will be able to subscribe to the event
-    $user = App\Models\User::find(1);
-
-    event(new \App\Events\MessageSent($user, $fakeUser));
-
-    // Redis::set('name', 'Kirk');
-    // return Redis::get('name');
-});
+//Route::get('users', function() {
+//    return App\Models\User::latest('id')->get();
+//});
+//
+//Route::get('/redi', function() {
+//    Redis::set('name', 'Kirk');
+//    return Redis::get('name');
+//});
+//
+//Route::get('/private-event', function() {
+//
+//    // Create a new fake user
+//    $faker = Faker\Factory::create();
+//
+//    // Create a new user
+//    $fakeUser = new App\Models\User();
+//    $fakeUser->first_name = $faker->firstName();
+//    $fakeUser->last_name  = $faker->lastName;
+//    $fakeUser->email      = $faker->email;
+//    $fakeUser->password   = Hash::make('111111');
+//    $fakeUser->verified   = 1;
+//    $fakeUser->save();
+//
+//    // Only this user will be able to subscribe to the event
+//    $user = App\Models\User::find(1);
+//
+//    event(new \App\Events\MessageSent($user, $fakeUser));
+//
+//    // Redis::set('name', 'Kirk');
+//    // return Redis::get('name');
+//});
 
 // Login Routes (OAuth Clients Included)
 Route::group(['prefix' => '/administration'], function () {
@@ -164,7 +158,7 @@ Route::group(['prefix' => '/administration'], function () {
 });
 
 Route::group(['prefix' => '/login', 'middleware' => ['role:' . config('role.names.super_admin')]], function () {
-    Route::get('user1', function() {
-        return App\Models\User::latest('id')->get();
-    });
+//    Route::get('user1', function() {
+//        return App\Models\User::latest('id')->get();
+//    });
 });

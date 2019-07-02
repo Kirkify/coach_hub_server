@@ -64,5 +64,8 @@ class Kernel extends HttpKernel
         // External Packages
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+
+        // Coach Hub
+        'coach' => \App\Http\Middleware\CheckCoach::class,
     ];
 }

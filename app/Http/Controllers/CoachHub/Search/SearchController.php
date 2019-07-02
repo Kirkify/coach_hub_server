@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Coach;
+namespace App\Http\Controllers\CoachHub\Search;
 
-use App\Http\Resources\CoachProfile\CoachProfileResource;
+use App\Http\Resources\CoachHub\CoachProfile\CoachProfileResource;
 use App\Http\Resources\Sport\SportResource;
-use App\Models\CoachProfile;
+use App\Models\CoachHub\Coach\CoachProfile;
 use App\Models\ContactRequest;
 use App\Jobs\ContactRequestJob;
-use App\Models\Sport;
+use App\Models\CoachHub\Sport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class CoachController extends Controller
+class SearchController extends Controller
 {
     private $user;
 
@@ -25,8 +25,28 @@ class CoachController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api');
-        $this->user = Auth::user();
+    }
+
+    /**
+     * Get all coaches
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function coachIndex(Request $request)
+    {
+        $items = CoachProfile::all();
+
+//        $request->validate([
+//            'sports' => 'required|array',
+//            'sports.*' => 'exists:sports,id',
+//            'coaching_experience' => 'required|string|min:140',
+//            'athletic_highlights' => 'required|string|min:140',
+//            'session_plan' => 'required|string|min:140',
+//            'one_sentence_bio' => 'required|string|max:180'
+//        ]);
+        
+        return ['data' => CoachProfileResource::collection($items)];
     }
 
     /**
@@ -47,6 +67,7 @@ class CoachController extends Controller
             'coachProfile' => $coachProfile ? new CoachProfileResource($coachProfile) : null
         ]];
     }
+
 
     /**
      * Handle a registration request for the application.
@@ -87,7 +108,7 @@ class CoachController extends Controller
                 if ($coachProfile) {
                     // Attach the sports
                     $coachProfile->sports()->sync($request->input('sports'));
-                    return ['data' => new CoachProfileResource($coachProfile)];
+                    return ['data' => new ProgramResource($coachProfile)];
                 }
             } else {
                 return response()->json(

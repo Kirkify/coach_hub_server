@@ -5,7 +5,9 @@ use App\Models\Message;
 use App\Models\Thread;
 use App\Models\Participant;
 use App\Models\User;
-use App\Models\CoachProfile;
+use App\Models\CoachHub\Coach\CoachProfile;
+use App\Models\CoachHub\Coach\CoachBaseProfile;
+use Carbon\Carbon;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,9 +60,17 @@ $factory->define(Participant::class, function (Faker $faker) {
     ];
 });
 
+$factory->define(CoachBaseProfile::class, function (Faker $faker) {
+    return [
+        'name'                              => $faker->name(),
+        'gender'                            => 'm',
+        'date_of_birth'                     => Carbon::createFromDate(1989, 8, 21),
+    ];
+});
 
 $factory->define(CoachProfile::class, function (Faker $faker) {
     return [
+        'name'                              => $faker->name(),
         'coaching_experience'               => $faker->text(150),
         'athletic_highlights'               => $faker->text(150),
         'session_plan'                      => $faker->text(150),
