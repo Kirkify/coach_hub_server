@@ -63,6 +63,7 @@ $factory->define(Participant::class, function (Faker $faker) {
 $factory->define(CoachBaseProfile::class, function (Faker $faker) {
     return [
         'name'                              => $faker->name(),
+        'username'                          => $faker->userName,
         'gender'                            => 'm',
         'date_of_birth'                     => Carbon::createFromDate(1989, 8, 21),
     ];

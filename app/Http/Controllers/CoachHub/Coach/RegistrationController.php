@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\CoachHub\Coach;
 
+use App\Events\CoachHub\RegistrationEvent;
 use App\Http\Resources\CoachHub\Registration\RegistrationResource;
 use App\Models\CoachHub\Registration;
 use Illuminate\Http\Request;
@@ -83,7 +84,9 @@ class RegistrationController extends Controller
 
         // TODO: An event should be sent out to notify coach of registration
         if ($registration = $this->coach->registrations()->create($result)) {
-            return ['data' => new RegistrationResource($registration)];
+            $response = (new RegistrationResource($registration))->resolve();
+            event(new RegistrationEvent($this->coach->user->id, $response));
+            return ['data' => $response];
         } else {
             return response()->json('There was an error creating the program', 422);
         }

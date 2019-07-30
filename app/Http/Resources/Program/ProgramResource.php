@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Program;
 
+use App\Http\Resources\CoachHub\Coach\CoachBaseProfileResource;
+use App\Http\Resources\CoachHub\ProgramPriceResource;
 use App\Http\Resources\IdResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,7 +29,9 @@ class ProgramResource extends JsonResource
             'max_participants' => $this->max_participants,
             'has_wait_list' => $this->has_wait_list,
             'location_id' => $this->location_id,
+            'prices' => ProgramPriceResource::collection($this->prices),
             'tags' => IdResource::collection($this->tags),
+            'coach' => new CoachBaseProfileResource($this->coach),
             'registrations_count' => $this->registrations_count ?? 0
         ];
     }

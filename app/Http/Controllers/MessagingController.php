@@ -111,7 +111,7 @@ class MessagingController extends Controller
             $uniqueUserIds = $participants->pluck('user_id')->unique()->toArray();
             $users = User::query()->whereIn('id', $uniqueUserIds)->get();
 
-            // Since we manipulated the thread we need to re
+            // Since we manipulated the thread we need to refresh
             $thread = $thread->fresh();
 
             $response = [

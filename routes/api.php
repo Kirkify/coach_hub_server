@@ -34,7 +34,12 @@ Route::group(['prefix' => '/coach-hub', 'namespace' => 'CoachHub'], function () 
     });
 
     Route::group(['prefix' => '/search', 'namespace' => 'Search'], function () {
-        Route::get('coaches', 'SearchController@coachIndex');
+        Route::get('coaches', 'SearchController@coachesIndex');
+        Route::get('programs', 'SearchController@programsIndex');
+    });
+
+    Route::group(['prefix' => '/programs', 'namespace' => 'Search'], function () {
+        Route::get('{program}', 'SearchController@program');
     });
 });
 

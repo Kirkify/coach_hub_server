@@ -18,6 +18,7 @@ class CreateCoachBaseProfiles extends Migration
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('name');
+            $table->string('username', 15)->unique()->nullable();
             $table->enum('gender', ['m', 'f', 'u']);
             $table->date('date_of_birth');
             $table->timestamps();

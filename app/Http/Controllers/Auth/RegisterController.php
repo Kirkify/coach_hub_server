@@ -41,6 +41,7 @@ class RegisterController extends Controller
             'verified' => 0
         ]);
 
+        // TODO: Figure out if there is a more secure way
         $confirmEmail = new ConfirmEmail(['token' => md5(random_bytes(5))]);
 
         $user->confirmEmail()->save($confirmEmail);

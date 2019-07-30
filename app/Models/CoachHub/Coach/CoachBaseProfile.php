@@ -17,8 +17,8 @@ class CoachBaseProfile extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'gender',
-        'date_of_birth'
+        'name', 'username',
+        'gender', 'date_of_birth'
     ];
 
     /**

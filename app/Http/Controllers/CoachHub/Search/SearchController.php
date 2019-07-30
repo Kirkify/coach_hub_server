@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\CoachHub\Search;
 
 use App\Http\Resources\CoachHub\CoachProfile\CoachProfileResource;
+use App\Http\Resources\Program\ProgramResource;
 use App\Http\Resources\Sport\SportResource;
 use App\Models\CoachHub\Coach\CoachProfile;
+use App\Models\CoachHub\Program;
 use App\Models\ContactRequest;
 use App\Jobs\ContactRequestJob;
 use App\Models\CoachHub\Sport;
@@ -33,7 +35,7 @@ class SearchController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function coachIndex(Request $request)
+    public function coachesIndex(Request $request)
     {
         $items = CoachProfile::all();
 
@@ -47,6 +49,40 @@ class SearchController extends Controller
 //        ]);
         
         return ['data' => CoachProfileResource::collection($items)];
+    }
+
+    /**
+     * Get all coaches
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function programsIndex(Request $request)
+    {
+        $items = Program::with('coach')->get();
+
+//        $request->validate([
+//            'sports' => 'required|array',
+//            'sports.*' => 'exists:sports,id',
+//            'coaching_experience' => 'required|string|min:140',
+//            'athletic_highlights' => 'required|string|min:140',
+//            'session_plan' => 'required|string|min:140',
+//            'one_sentence_bio' => 'required|string|max:180'
+//        ]);
+
+        return ['data' => ProgramResource::collection($items)];
+    }
+
+
+    /**
+     * Get all coaches
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function program(Program $program)
+    {
+        return ['data' => new ProgramResource($program)];
     }
 
     /**

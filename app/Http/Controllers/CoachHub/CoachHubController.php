@@ -7,6 +7,7 @@ use App\Http\Resources\CoachHub\CoachProfile\CoachProfileResource;
 use App\Http\Resources\Sport\SportResource;
 use App\Models\CoachHub\Coach\CoachBaseProfile;
 use App\Models\CoachHub\Sport;
+use App\Rules\Username;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +63,7 @@ class CoachHubController extends Controller
     {
         $input = $request->validate([
             'name' => 'required|string|max:100',
+            'username' => [ 'required', new Username, "unique:coach_base_profiles" ],
             'gender' => 'required|in:m,f,o',
             'date_of_birth' => 'required|date',
         ]);

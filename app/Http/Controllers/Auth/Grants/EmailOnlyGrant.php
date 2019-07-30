@@ -79,7 +79,7 @@ class EmailOnlyGrant extends AbstractGrant
         }
 
         $email_only_secret = $this->getRequestParameter('email_only_secret', $request);
-        if (is_null($email_only_secret) || $email_only_secret !== config('secrets.email_only_grant')) {
+        if (is_null($email_only_secret) || $email_only_secret !== config('secrets.email_only_secret')) {
             throw OAuthServerException::invalidRequest('email_only');
         }
 

@@ -15,7 +15,7 @@ class Program extends Model
      *
      * @var array
      */
-    protected $with = ['tags'];
+    protected $with = ['tags', 'prices'];
 
     /**
      * The relations to eager load on every query.
@@ -42,8 +42,8 @@ class Program extends Model
      */
     protected $fillable = [
         'program_title', 'program_description', 'category',
-        'registration_start', 'registration_end', 'has_wait_list',
-        'program_start', 'program_end', 'max_participants', 'location_id'
+        'registration_start', 'registration_end',
+        'program_start', 'program_end', 'location_id'
     ];
 
     /**
@@ -51,7 +51,7 @@ class Program extends Model
      */
     public function coach()
     {
-        return $this->belongsTo(CoachBaseProfile::class);
+        return $this->belongsTo(CoachBaseProfile::class, 'coach_base_profile_id');
     }
 
     /**
@@ -68,6 +68,14 @@ class Program extends Model
     public function registrations()
     {
         return $this->hasMany(Registration::class);
+    }
+
+    /**
+     * Get the phone record associated with the user.
+     */
+    public function prices()
+    {
+        return $this->hasMany(ProgramPrice::class);
     }
 
     /**

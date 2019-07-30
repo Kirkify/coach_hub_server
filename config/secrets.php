@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'email_only_grant' => env('EMAIL_ONLY_SECRET'),
+    'email_only_secret' => env('EMAIL_ONLY_SECRET'),
 
     'google_recaptcha' => env('GOOGLE_RECAPTCHA_SECRET'),
 
