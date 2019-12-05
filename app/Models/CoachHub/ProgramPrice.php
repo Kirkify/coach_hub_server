@@ -11,6 +11,17 @@ class ProgramPrice extends Model
     use SoftDeletes;
 
     /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'has_wait_list' => 'boolean',
+        'price' => 'float',
+        'sub_options' => 'array'
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -35,5 +46,10 @@ class ProgramPrice extends Model
     public function program()
     {
         return $this->belongsTo(Program::class);
+    }
+
+    public function registrations()
+    {
+        return $this->belongsToMany(Registration::class)->withTimestamps();;
     }
 }

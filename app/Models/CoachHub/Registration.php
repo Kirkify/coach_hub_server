@@ -47,4 +47,12 @@ class Registration extends Model
     {
         return $this->hasOne(Program::class);
     }
+
+    /**
+     * Get the program associated with the registration.
+     */
+    public function programPrices()
+    {
+        return $this->belongsToMany(ProgramPrice::class)->withTimestamps();
+    }
 }

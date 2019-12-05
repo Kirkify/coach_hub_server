@@ -21,7 +21,7 @@ class ProgramPriceResource extends JsonResource
             'guid' => $this->guid,
             'name' => $this->name,
             'capacity' => $this->capacity,
-            'price' => (float) $this->price,
+            'price' => $this->price,
             'has_wait_list' => $this->has_wait_list,
             'sub_options' => $this->sub_options,
             'sub_options_preset' => $this->sub_options_preset,

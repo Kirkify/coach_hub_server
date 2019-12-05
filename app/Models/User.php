@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\CoachHub\Registration;
+use App\Models\FormHub\Form;
 use App\Notifications\ResetPasswordNotification;
 // use Cmgmyr\Messenger\Traits\Messagable;
 use Illuminate\Notifications\Notifiable;
@@ -86,5 +87,9 @@ class User extends Authenticatable
     public function hasFriend($userId) {
         // TODO: Implement friend list table
         return true;
+    }
+
+    public function forms() {
+        return $this->belongsToMany(Form::class);
     }
 }

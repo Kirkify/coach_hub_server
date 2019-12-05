@@ -19,6 +19,12 @@ Route::post('/contact', 'ContactController@contact')->name('contact');
 
 Route::get('/dashboard', 'Dashboard\DashboardController@index')->name('dashboard');
 
+Route::group(['prefix' => '/form-hub', 'namespace' => 'FormHub'], function () {
+    Route::post('/new', 'FormHubController@createNewForm');
+    Route::get('/get/{form}', 'FormHubController@getForm');
+    Route::post('/update/{form}', 'FormHubController@updateForm');
+});
+
 Route::group(['prefix' => '/coach-hub', 'namespace' => 'CoachHub'], function () {
     Route::get('/initial-state', 'CoachHubController@initialState');
     Route::post('/coach-profile', 'CoachHubController@createCoachBaseProfile');
@@ -28,9 +34,14 @@ Route::group(['prefix' => '/coach-hub', 'namespace' => 'CoachHub'], function () 
         Route::get('/initial-state', 'CoachController@initialState');
         Route::post('/apply-to-coach', 'CoachController@application');
         Route::apiResource('locations', 'LocationController');
+        Route::post('/programs/add-form/{program}', 'ProgramController@addForm');
         Route::apiResource('programs', 'ProgramController');
         Route::apiResource('tags', 'TagController');
         Route::apiResource('registrations', 'RegistrationController');
+    });
+
+    Route::group(['prefix' => '/coaches', 'namespace' => 'CoachPortfolio'], function () {
+        Route::get('/{name}', 'CoachPortfolioController@profile');
     });
 
     Route::group(['prefix' => '/search', 'namespace' => 'Search'], function () {

@@ -18,7 +18,7 @@ class CreateProgramPricesTable extends Migration
             $table->unsignedInteger('program_id');
             $table->foreign('program_id')->references('id')->on('programs');
             $table->string('guid', 10);
-            $table->string('name', 180);
+            $table->string('name', 180)->nullable();
             $table->decimal('price', 8, 2);
             $table->unsignedInteger('capacity');
             $table->boolean('has_wait_list');

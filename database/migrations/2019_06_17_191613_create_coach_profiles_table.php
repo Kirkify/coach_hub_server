@@ -21,6 +21,7 @@ class CreateCoachProfilesTable extends Migration
             $table->longText('athletic_highlights');
             $table->longText('session_plan');
             $table->string('one_sentence_bio', 180);
+            $table->boolean('approved')->default(false);
             $table->timestamps();
         });
     }

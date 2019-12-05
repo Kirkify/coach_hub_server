@@ -59,7 +59,7 @@ class SearchController extends Controller
      */
     public function programsIndex(Request $request)
     {
-        $items = Program::with('coach')->get();
+        $items = Program::search()->get();
 
 //        $request->validate([
 //            'sports' => 'required|array',

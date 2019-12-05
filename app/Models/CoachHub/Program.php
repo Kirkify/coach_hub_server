@@ -3,6 +3,7 @@
 namespace App\Models\CoachHub;
 
 use App\Models\CoachHub\Coach\CoachBaseProfile;
+use App\Models\FormHub\Form;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -43,8 +44,20 @@ class Program extends Model
     protected $fillable = [
         'program_title', 'program_description', 'category',
         'registration_start', 'registration_end',
-        'program_start', 'program_end', 'location_id'
+        'program_start', 'program_end', 'location_id', 'form_id'
     ];
+
+    /**
+     * Scope a query to only include users of a given type.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mixed  $type
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearch($query)
+    {
+        return $query->with(['tags', 'prices']);
+    }
 
     /**
      * Get the coach that owns the profile.
@@ -60,6 +73,14 @@ class Program extends Model
     public function location()
     {
         return $this->hasOne(Location::class);
+    }
+
+    /**
+     * Get the form associated with the program.
+     */
+    public function form()
+    {
+        return $this->hasOne(Form::class, 'id', 'form_id');
     }
 
     /**
