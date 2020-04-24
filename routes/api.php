@@ -80,7 +80,7 @@ Route::post('/logout', 'Auth\AuthenticationController@logout')->name('logout');
 Route::post('/register', 'Auth\RegisterController@register')->name('register');
 Route::post('/verify', 'Auth\RegisterController@verify')->name('verify');
 Route::post('/forgot-password', 'Auth\ForgotPasswordController@sendResetLinkEmail');
-Route::post('/forgot-password/reset', 'Auth\ResetPasswordController@reset');
+Route::post('/reset-password', 'Auth\ResetPasswordController@reset');
 
 // Login Routes (OAuth Clients Included)
 Route::group(['prefix' => '/login'], function () {

@@ -21,7 +21,7 @@ class ResetPasswordController extends Controller
     |
     */
 
-    use ResetsPasswords;
+    use ResetsPasswords, IssueTokenTrait;
 
     /**
      * Get the response for a successful password reset.
@@ -31,7 +31,8 @@ class ResetPasswordController extends Controller
      */
     protected function sendResetResponse($request, $response)
     {
-        return response()->json(trans($response));
+        return $this->issueToken($request, 'email_only');
+//        return response()->json(trans($response));
     }
 
     /**

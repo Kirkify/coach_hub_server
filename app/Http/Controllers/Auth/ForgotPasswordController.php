@@ -50,6 +50,7 @@ class ForgotPasswordController extends Controller
             'email' => 'required|email',
             'captcha' => ['required', new Captcha]
         ]);
+        // TODO: You should also make sure they have verified their email
     }
 
     /**
