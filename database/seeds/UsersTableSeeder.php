@@ -51,6 +51,8 @@ class UsersTableSeeder extends Seeder
         ]);
 
         $kirk->coachBaseProfile()->save($coachBaseProfile);
+        // Give coach role
+        $kirk->assignRole(Role::findByName(config('role.names.coach')));
 
         $location = $coachBaseProfile->locations()->create([
             'name' => 'March Tennis Club',

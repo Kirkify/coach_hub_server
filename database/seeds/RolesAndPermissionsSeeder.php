@@ -18,6 +18,10 @@ class RolesAndPermissionsSeeder extends Seeder
         app()['cache']->forget('spatie.permission.cache');
 
         // Super admin only permissions
+        Permission::create(['name' => config('permission.names.create_base_profile')]);
+        Permission::create(['name' => config('permission.names.create_base_profile')]);
+
+        // Super admin only permissions
         Permission::create(['name' => config('permission.names.create_admin')]);
         Permission::create(['name' => config('permission.names.read_admin')]);
         Permission::create(['name' => config('permission.names.update_admin')]);
@@ -39,5 +43,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // Give super admins all permissions
         $role = Role::create(['name' => config('role.names.super_admin')]);
         $role->givePermissionTo(Permission::all());
+
+        $role = Role::create(['name' => config('role.names.coach')]);
     }
 }

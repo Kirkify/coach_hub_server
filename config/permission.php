@@ -92,6 +92,10 @@ return [
      */
 
     'names' => [
+        // Coach Permissions
+        'create_base_profile' => 'create base profile',
+        'create_profile' => 'create base profile',
+
         // Super Admin Permissions
         'create_admin' => 'create admin',
         'read_admin' => 'read admin',

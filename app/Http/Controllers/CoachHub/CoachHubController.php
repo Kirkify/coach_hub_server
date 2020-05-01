@@ -23,7 +23,7 @@ class CoachHubController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api')->except(['initialState']);
+        $this->middleware('auth:api');
         $this->user = Auth::user();
     }
 
@@ -37,12 +37,12 @@ class CoachHubController extends Controller
     public function initialState(Request $request)
     {
         // If user is currently logged in let's relate their user_id to the contact request
-        $user = Auth::guard('api')->check() ? Auth::guard('api') : null;
-        $coachBaseProfile = null;
+//        $user = Auth::guard('api')->check() ? Auth::guard('api') : null;
+        $coachBaseProfile = $this->user->coachBaseProfile;
 
-        if ($user) {
-            $coachBaseProfile = $this->user->coachBaseProfile;
-        }
+//        if ($user) {
+//            $coachBaseProfile = $this->user->coachBaseProfile;
+//        }
 
         $sports = Sport::all();
 

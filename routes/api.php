@@ -30,7 +30,7 @@ Route::group(['prefix' => '/coach-hub', 'namespace' => 'CoachHub'], function () 
     Route::post('/coach-profile', 'CoachHubController@createCoachBaseProfile');
     Route::post('/coach-profile/{profile}', 'CoachHubController@updateCoachBaseProfile');
 
-    Route::group(['prefix' => '/coach', 'namespace' => 'Coach'], function () {
+    Route::group(['middleware' => ['role:super-admin|coach'], 'prefix' => '/coach', 'namespace' => 'Coach'], function () {
         Route::get('/initial-state', 'CoachController@initialState');
         Route::post('/apply-to-coach', 'CoachController@application');
         Route::apiResource('locations', 'LocationController');
